@@ -1,0 +1,19 @@
+﻿@page "/editor/{PageLink}"
+@inherits EditorBase
+
+<div class="top-row px-4">
+    <label>Title:</label>
+    <input @bind="PageModel.Title" />
+    <NavLink @onclick="Save">
+        <span class="oi oi-check" aria-hidden="true"></span> Save
+    </NavLink>
+    <NavLink @onclick="Cancel">
+        <span class="oi oi-x" aria-hidden="true"></span> Cancel
+    </NavLink>
+    <LoginDisplay />
+    <a href="https://docs.microsoft.com/en-us/aspnet/" target="_blank">About</a>
+</div>
+
+<div class="content px-4">
+    <textarea style="height: 100%; width: 100%; position: fixed;" @bind="PageModel.Content" />
+</div>
