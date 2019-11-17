@@ -11,13 +11,6 @@ namespace Bliki.Data
 {
     public class PageManager
     {
-        private readonly PowerShell _shell;
-
-        public PageManager()
-        {
-            _shell = PowerShell.Create();
-        }
-
         public bool SavePage(WikiPageModel model)
         {
             try
@@ -96,12 +89,13 @@ namespace Bliki.Data
 
         private void GitCommit(string fileName)
         {
-            _shell.AddScript(@"cd ..\..\..\");
-            _shell.AddScript(@"git init");
-            _shell.AddScript(@"git add *");
-            _shell.AddScript($@"git commit -m 'Saving file {fileName} at {DateTime.Now.ToString()}'");
-            _shell.AddScript(@"git push");
-            var results = _shell.Invoke();
+            var shell = PowerShell.Create();
+            shell.AddScript(@"cd ..\..\..\");
+            shell.AddScript(@"git init");
+            shell.AddScript(@"git add *");
+            shell.AddScript($@"git commit -m 'Saving file {fileName} at {DateTime.Now.ToString()}'");
+            shell.AddScript(@"git push");
+            var results = shell.Invoke();
         }
 
 
