@@ -90,8 +90,7 @@ namespace Bliki.Data
         private void GitCommit(string fileName)
         {
             var shell = PowerShell.Create();
-            shell.AddScript(@"cd ..\..\..\");
-            shell.AddScript(@"git init");
+            shell.AddScript(@"cd ..\..\..\..\");
             shell.AddScript(@"git add *");
             shell.AddScript($@"git commit -m 'Saving file {fileName} at {DateTime.Now.ToString()}'");
             shell.AddScript(@"git push");
