@@ -1,7 +1,8 @@
 using Bliki.Data;
+using Bliki.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System.IO;
-using System.Management.Automation;
 
 namespace Bliki.Test
 {
@@ -11,17 +12,55 @@ namespace Bliki.Test
         [TestMethod]
         public void CanSave()
         {
-            var manager = new PageManager();
+            // Arrange
+            var gitMock = new Mock<IGitManager>();
+            var manager = new PageManager(gitMock.Object, @"..\..\..\WikiPages");
 
             var testPageModel = new WikiPageModel
             {
                 Content = "This is test content",
                 Title = "Test Page 1"
             };
+            var savePath = @"..\..\..\WikiPages\test-page-1";
 
+            // Act
             var result = manager.SavePage(testPageModel);
+
+            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual("test-page-1", testPageModel.PageLink);
+            Assert.IsTrue(File.Exists(savePath));
+            Assert.AreEqual(
+                "{\"Title\":\"Test Page 1\",\"PageLink\":\"test-page-1\",\"Content\":\"This is test content\"}", 
+                File.ReadAllText(savePath));
+            
+            // Cleanup
+            File.Delete(savePath);
+        }
+
+
+        [TestMethod]
+        public void CanLoad()
+        {
+            // Arrange
+            var gitMock = new Mock<IGitManager>();
+            var manager = new PageManager(gitMock.Object, @"..\..\..\WikiPages");
+
+            var savePath = @"..\..\..\WikiPages\test-page-2";
+            var content = "{\"Title\":\"Test Page 2\",\"PageLink\":\"test-page-2\",\"Content\":\"This is load test content\"}";
+            File.WriteAllText(savePath, content);
+
+            // Act
+            var pageModel = manager.LoadPage("test-page-2");
+
+            // Assert
+            Assert.IsNotNull(pageModel);
+            Assert.AreEqual("Test Page 2", pageModel.Title);
+            Assert.AreEqual("This is load test content", pageModel.Content);
+            Assert.AreEqual("test-page-2", pageModel.PageLink);
+
+            // Cleanup
+            File.Delete(savePath);
         }
     }
 }

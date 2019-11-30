@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Bliki.Data
+﻿namespace Bliki.Data
 {
     public class NavPageMeta
     {
-        public string Title { get; set; }
-        public string PageLink { get; set; }
+        public NavPageMeta(string title, string pageLink)
+        {
+            Title = title;
+            PageLink = pageLink;
+        }
+
+        public string Title { get; }
+        public string PageLink { get; }
     }
 }

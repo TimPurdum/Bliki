@@ -1,17 +1,18 @@
 ﻿using Bliki.Data;
 using Microsoft.AspNetCore.Components;
-using System.Linq;
+using Microsoft.AspNetCore.Components.Rendering;
+using System;
 
 namespace Bliki.Pages
 {
     public class IndexBase : ComponentBase
     {
         [Parameter]
-        public string PageLink { get; set; }
+        public string PageLink { get; set; } = "home";
         [Inject]
-        private PageManager _pageManager { get; set; }
+        private PageManager _pageManager { get; set; } = default!;
 
-        protected WikiPageModel PageModel { get; set; }
+        protected WikiPageModel PageModel { get; set; } = new WikiPageModel();
 
         protected override void OnInitialized()
         {
@@ -21,9 +22,33 @@ namespace Bliki.Pages
 
         protected override void OnAfterRender(bool firstRender)
         {
-            PageModel = _pageManager.LoadPage(PageLink ?? "home");
-            
-            base.OnAfterRender(firstRender);
+            try
+            {
+                PageModel = _pageManager.LoadPage(PageLink ?? "home");
+
+                base.OnAfterRender(firstRender);
+                if (firstRender)
+                {
+                    StateHasChanged();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+
+        protected override void BuildRenderTree(RenderTreeBuilder builder)
+        {
+            try
+            {
+                base.BuildRenderTree(builder);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

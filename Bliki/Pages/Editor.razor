@@ -1,15 +1,16 @@
-﻿@page "/editor/{PageLink}"
+﻿@page "/editor"
+@page "/editor/{PageLink}"
 @inherits EditorBase
 
 <div class="top-row px-4">
     <label>Title:</label>
     <input @bind="PageModel.Title" />
-    <NavLink @onclick="Save">
+    <a @onclick="Save">
         <span class="oi oi-check" aria-hidden="true"></span> Save
-    </NavLink>
-    <NavLink @onclick="Cancel">
+    </a>
+    <a @onclick="Cancel">
         <span class="oi oi-x" aria-hidden="true"></span> Cancel
-    </NavLink>
+    </a>
     <LoginDisplay />
     <a href="https://docs.microsoft.com/en-us/aspnet/" target="_blank">About</a>
 </div>
