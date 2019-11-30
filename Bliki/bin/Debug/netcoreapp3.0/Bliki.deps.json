@@ -13,7 +13,7 @@
     "languageVersion": "",
     "platform": "",
     "allowUnsafe": false,
-    "warningsAsErrors": false,
+    "warningsAsErrors": true,
     "optimize": false,
     "keyFile": "",
     "emitEntryPoint": true,

@@ -3,11 +3,25 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UserSecretsId>aspnet-Bliki-96B5150A-E6B2-442E-BC90-0041D9CDC04F</UserSecretsId>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Data\Migrations\20191117015725_Initial.cs" />
     <Compile Remove="Data\Migrations\20191117015725_Initial.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="WikiPages\home" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="WikiPages\home" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,10 +35,6 @@
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.2.3" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
     <PackageReference Include="System.Management.Automation" Version="6.2.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="WikiPages\" />
   </ItemGroup>
 
 </Project>

@@ -8,8 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Bliki.Areas.Identity;
 using Bliki.Data;
-using Microsoft.AspNetCore.Components;
-using System.Management.Automation;
+using Bliki.Interfaces;
 
 namespace Bliki
 {
@@ -34,8 +33,8 @@ namespace Bliki
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
-            services.AddScoped<PowerShell>();
             services.AddScoped<PageManager>();
+            services.AddScoped(typeof(IGitManager), typeof(GitManager));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

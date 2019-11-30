@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Bliki.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Management.Automation;
 using System.Text.Json;
 using System.Web;
 
@@ -11,10 +10,27 @@ namespace Bliki.Data
 {
     public class PageManager
     {
+        private readonly IGitManager _gitManager;
+
+        public PageManager(IGitManager gitManager)
+        {
+            _gitManager = gitManager;
+        }
+
+        public PageManager(IGitManager gitManager, string wikiDirectory)
+        {
+            _gitManager = gitManager;
+            _wikiPageDirectory = wikiDirectory;
+        }
+
         public bool SavePage(WikiPageModel model)
         {
             try
             {
+                if (model.Title == null)
+                {
+                    model.Title = "Unnamed";
+                }
                 if (model.PageLink == null)
                 {
                     model.PageLink = CreatePageLink(model.Title);
@@ -22,7 +38,7 @@ namespace Bliki.Data
                 var json = JsonSerializer.Serialize(model);
                 var savePath = GetFilePath(model.PageLink);
                 File.WriteAllText(savePath, json);
-                GitCommit(model.PageLink);
+                _gitManager.Commit(model.PageLink);
                 return true;
             }
             catch(Exception ex)
@@ -34,12 +50,13 @@ namespace Bliki.Data
 
         public IList<NavPageMeta> GetPageMetas()
         {
-            var fileNames = Directory.GetFiles(wikiPageDirectory);
+            var filePaths = Directory.GetFiles(_wikiPageDirectory);
             var result = new List<NavPageMeta>();
 
-            foreach (var name in fileNames)
+            foreach (var path in filePaths)
             {
-                result.Add(new NavPageMeta { PageLink = name, Title = CreatePageTitle(name) });
+                var fileName = Path.GetFileName(path);
+                result.Add(new NavPageMeta(CreatePageTitle(fileName), fileName));
             }
 
             return result;
@@ -47,27 +64,19 @@ namespace Bliki.Data
 
         public WikiPageModel LoadPage(string pageLink)
         {
-            try
+            var filePath = GetFilePath(pageLink);
+            if (!File.Exists(filePath))
             {
-                var filePath = GetFilePath(pageLink);
-                if (!File.Exists(filePath))
-                {
-                    return new WikiPageModel { Content = "# New Page", PageLink = pageLink, Title = "New Page" };
-                }
-                var json = File.ReadAllText(filePath);
-                return JsonSerializer.Deserialize<WikiPageModel>(json);
+                return new WikiPageModel { Content = "# New Page", PageLink = pageLink, Title = "New Page" };
             }
-            catch(Exception ex)
-            {
-                LogException(ex);
-                return null;
-            }
+            var json = File.ReadAllText(filePath);
+            return JsonSerializer.Deserialize<WikiPageModel>(json);
         }
 
 
         private string GetFilePath(string fileName)
         {
-            return Path.Combine(wikiPageDirectory, fileName);
+            return Path.Combine(_wikiPageDirectory, fileName);
         }
 
 
@@ -87,23 +96,12 @@ namespace Bliki.Data
         }
 
 
-        private void GitCommit(string fileName)
-        {
-            var shell = PowerShell.Create();
-            shell.AddScript(@"cd ..\..\..\..\");
-            shell.AddScript(@"git add *");
-            shell.AddScript($@"git commit -m 'Saving file {fileName} at {DateTime.Now.ToString()}'");
-            shell.AddScript(@"git push");
-            var results = shell.Invoke();
-        }
-
-
         private void LogException(Exception ex)
         {
             var exceptionPath = GetFilePath("bliki.exceptions");
             File.AppendAllText(exceptionPath, ex.Message);
         }
 
-        private const string wikiPageDirectory = @"..\..\..\WikiPages";
+        private readonly string _wikiPageDirectory = "WikiPages";
     }
 }
