@@ -16,7 +16,7 @@ namespace Bliki.Data
                     shell.Runspace.ResetRunspaceState();
                     shell.Runspace.Open();
                 }
-                shell.AddScript(@"cd ..\..\..\..\");
+
                 shell.AddScript(@"git add *");
                 shell.AddScript($@"git commit -m 'Saving file {fileName} at {DateTime.Now.ToString()}'");
                 shell.AddScript(@"git push");
