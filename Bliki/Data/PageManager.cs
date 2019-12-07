@@ -1,6 +1,7 @@
 ﻿using Bliki.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -30,6 +31,9 @@ namespace Bliki.Data
         {
             try
             {
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+                Debug.WriteLine("Save started");
                 if (model.Title == null)
                 {
                     model.Title = "Unnamed";
@@ -38,13 +42,18 @@ namespace Bliki.Data
                 {
                     model.PageLink = CreatePageLink(model.Title);
                 }
+                Debug.WriteLine($"PageLink Created: {stopwatch.Elapsed}");
                 var json = JsonSerializer.Serialize(model);
+                Debug.WriteLine($"Json Serialized: {stopwatch.Elapsed}");
                 var savePath = GetFilePath(model.PageLink);
                 File.WriteAllText(savePath, json);
+                Debug.WriteLine($"File saved: {stopwatch.Elapsed}");
                 await Task.Run(async () =>
                 {
                     await _gitManager.Commit(model.PageLink);
                 });
+                Debug.WriteLine($"Git Commit called : {stopwatch.Elapsed}");
+                stopwatch.Stop();
                 return true;
             }
             catch(Exception ex)
