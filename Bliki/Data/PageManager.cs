@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Web;
 
@@ -15,6 +16,7 @@ namespace Bliki.Data
         public PageManager(IGitManager gitManager)
         {
             _gitManager = gitManager;
+            _wikiPageDirectory = FindWikiPageDirectory(Directory.GetCurrentDirectory());
         }
 
         public PageManager(IGitManager gitManager, string wikiDirectory)
@@ -56,6 +58,7 @@ namespace Bliki.Data
             foreach (var path in filePaths)
             {
                 var fileName = Path.GetFileName(path);
+                if (fileName == "bliki.exceptions") continue;
                 result.Add(new NavPageMeta(CreatePageTitle(fileName), fileName));
             }
 
@@ -102,6 +105,24 @@ namespace Bliki.Data
             File.AppendAllText(exceptionPath, ex.Message);
         }
 
-        private readonly string _wikiPageDirectory = "WikiPages";
+
+        private string FindWikiPageDirectory(string path)
+        {
+            try
+            {
+                if (Directory.Exists(Path.Combine(path, "WikiPages")))
+                {
+                    return Path.Combine(path, "WikiPages");
+                }
+                return FindWikiPageDirectory(Directory.GetParent(path).FullName);
+            }
+            catch (Exception ex)
+            {
+                LogException(ex);
+                return string.Empty;
+            }
+        }
+
+        private readonly string _wikiPageDirectory = @"..\..\..\..\WikiPages";
     }
 }

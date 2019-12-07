@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Bliki.Shared
 {
@@ -20,48 +21,18 @@ namespace Bliki.Shared
             collapseNavMenu = !collapseNavMenu;
         }
 
-        protected override void OnInitialized()
-        {
-            try
-            {
-                base.OnInitialized();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
-
-        protected override void OnParametersSet()
-        {
-            try
-            {
-                base.OnParametersSet();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
 
         protected override void OnAfterRender(bool firstRender)
         {
             try
             {
                 base.OnAfterRender(firstRender);
-                PageMetas = _pageManager.GetPageMetas();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
-
-        protected override void BuildRenderTree(RenderTreeBuilder builder)
-        {
-            try
-            {
-                base.BuildRenderTree(builder);
+                var metaList = _pageManager.GetPageMetas();
+                if (!PageMetas.SequenceEqual(metaList))
+                {
+                    PageMetas = metaList;
+                    StateHasChanged();
+                }
             }
             catch (Exception ex)
             {

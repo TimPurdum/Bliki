@@ -24,11 +24,12 @@ namespace Bliki.Pages
         {
             try
             {
-                PageModel = _pageManager.LoadPage(PageLink ?? "home");
-
                 base.OnAfterRender(firstRender);
-                if (firstRender)
+                var model = _pageManager.LoadPage(PageLink ?? "home");
+
+                if (PageModel != model)
                 {
+                    PageModel = model;
                     StateHasChanged();
                 }
             }
