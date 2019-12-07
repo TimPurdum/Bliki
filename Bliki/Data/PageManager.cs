@@ -27,7 +27,7 @@ namespace Bliki.Data
             _wikiPageDirectory = wikiDirectory;
         }
 
-        public async Task<bool> SavePage(WikiPageModel model)
+        public bool SavePage(WikiPageModel model)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace Bliki.Data
                 var savePath = GetFilePath(model.PageLink);
                 File.WriteAllText(savePath, json);
                 Debug.WriteLine($"File saved: {stopwatch.Elapsed}");
-                await Task.Run(async () =>
+                Task.Run(async () =>
                 {
                     await _gitManager.Commit(model.PageLink);
                 });
