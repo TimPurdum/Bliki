@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace Bliki.Data
@@ -25,7 +26,7 @@ namespace Bliki.Data
             _wikiPageDirectory = wikiDirectory;
         }
 
-        public bool SavePage(WikiPageModel model)
+        public async Task<bool> SavePage(WikiPageModel model)
         {
             try
             {
@@ -40,7 +41,7 @@ namespace Bliki.Data
                 var json = JsonSerializer.Serialize(model);
                 var savePath = GetFilePath(model.PageLink);
                 File.WriteAllText(savePath, json);
-                _gitManager.Commit(model.PageLink);
+                await _gitManager.Commit(model.PageLink);
                 return true;
             }
             catch(Exception ex)

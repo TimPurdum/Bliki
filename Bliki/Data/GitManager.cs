@@ -2,26 +2,30 @@
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Threading.Tasks;
 
 namespace Bliki.Data
 {
     public class GitManager: IGitManager
     {
-        public void Commit(string fileName)
+        public async Task Commit(string fileName)
         {
-            using (var shell = PowerShell.Create())
+            await Task.Run(() =>
             {
-                if (shell.Runspace.RunspaceStateInfo.State != RunspaceState.Opened)
+                using (var shell = PowerShell.Create())
                 {
-                    shell.Runspace.ResetRunspaceState();
-                    shell.Runspace.Open();
-                }
+                    if (shell.Runspace.RunspaceStateInfo.State != RunspaceState.Opened)
+                    {
+                        shell.Runspace.ResetRunspaceState();
+                        shell.Runspace.Open();
+                    }
 
-                shell.AddScript(@"git add *");
-                shell.AddScript($@"git commit -m 'Saving file {fileName} at {DateTime.Now.ToString()}'");
-                shell.AddScript(@"git push");
-                var results = shell.Invoke();
-            }
+                    shell.AddScript(@"git add *");
+                    shell.AddScript($@"git commit -m 'Saving file {fileName} at {DateTime.Now.ToString()}'");
+                    shell.AddScript(@"git push");
+                    var results = shell.Invoke();
+                }
+            });
         }
     }
 }
