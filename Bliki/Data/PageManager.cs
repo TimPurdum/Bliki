@@ -84,9 +84,9 @@ namespace Bliki.Data
         }
 
 
-        private string GetFilePath(string fileName)
+        private string GetFilePath(string pageLink)
         {
-            return Path.Combine(_wikiPageDirectory, $"{fileName}.md");
+            return Path.Combine(_wikiPageDirectory, $"{pageLink}.md");
         }
 
 
@@ -95,7 +95,7 @@ namespace Bliki.Data
             var content = File.ReadAllText(filePath);
             var titleRgx = new Regex("<!-- TITLE: (.*) -->");
             var titleMatch = titleRgx.Match(content);
-            var title = "Page Title";
+            var title = CreatePageTitle(Path.GetFileNameWithoutExtension(filePath));
             if (titleMatch.Success) 
             {
                 title = titleMatch.Result("$1");
@@ -174,7 +174,11 @@ namespace Bliki.Data
 
         private void DeletePage(string link)
         {
-
+            var path = GetFilePath(link);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
         }
 
         private readonly string _wikiPageDirectory = @"..\..\..\..\WikiPages";
