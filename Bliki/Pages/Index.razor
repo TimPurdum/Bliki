@@ -16,7 +16,7 @@
 <div class="content px-4">
     @if (PageModel?.Content != null)
     {
-        <text>@((MarkupString)Markdown.ToHtml(PageModel.Content))</text>
+        <MarkdownRenderer Content="@PageModel.Content" />
     }
     else
     {
