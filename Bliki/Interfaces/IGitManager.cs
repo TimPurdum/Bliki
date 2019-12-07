@@ -1,7 +1,9 @@
-﻿namespace Bliki.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace Bliki.Interfaces
 {
     public interface IGitManager
     {
-        void Commit(string fileName);
+        Task Commit(string fileName);
     }
 }
