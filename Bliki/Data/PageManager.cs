@@ -41,7 +41,10 @@ namespace Bliki.Data
                 var json = JsonSerializer.Serialize(model);
                 var savePath = GetFilePath(model.PageLink);
                 File.WriteAllText(savePath, json);
-                await _gitManager.Commit(model.PageLink);
+                await Task.Run(async () =>
+                {
+                    await _gitManager.Commit(model.PageLink);
+                });
                 return true;
             }
             catch(Exception ex)
