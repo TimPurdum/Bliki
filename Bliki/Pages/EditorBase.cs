@@ -46,9 +46,9 @@ namespace Bliki.Pages
             }
         }
 
-        protected async void Save()
+        protected void Save()
         {
-            await _pageManager.SavePage(PageModel);
+            _pageManager.SavePage(PageModel);
             
             _navManager.NavigateTo($"/view/{PageModel.PageLink}");
         }
