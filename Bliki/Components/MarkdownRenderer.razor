@@ -5,6 +5,8 @@
     public string Content { get; set; } = "";
 
     private MarkdownPipeline _pipeline = new MarkdownPipelineBuilder()
-        .UseAdvancedExtensions().UseSoftlineBreakAsHardlineBreak()
-        .UseSyntaxHighlighting().Build();
+        .UseAdvancedExtensions()
+        .UseSyntaxHighlighting()
+        .UseSoftlineBreakAsHardlineBreak()
+        .Build();
 }
