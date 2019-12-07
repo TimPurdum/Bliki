@@ -1,14 +1,19 @@
 ﻿@page "/"
 @page "/view/{PageLink}/"
+@page "/{PageLink}/"
 @inherits IndexBase
 
 <div class="top-row px-4">
-    <a class="nav-link" href="@($"editor/{PageLink ?? "home"}")">
-        <span class="oi oi-pencil" aria-hidden="true"></span> Edit Page
-    </a>
-    <a class="nav-link" href="editor/new">
-        <span class="oi oi-plus" aria-hidden="true"></span> Create Page
-    </a>
+    <AuthorizeView>
+        <Authorized>
+            <a class="nav-link" href="@($"editor/{PageLink ?? "home"}")">
+                <span class="oi oi-pencil" aria-hidden="true"></span> Edit Page
+            </a>
+            <a class="nav-link" href="editor/new">
+                <span class="oi oi-plus" aria-hidden="true"></span> Create Page
+            </a>
+        </Authorized>
+    </AuthorizeView>
     <LoginDisplay />
     <a href="https://docs.microsoft.com/en-us/aspnet/" target="_blank">About</a>
 </div>
