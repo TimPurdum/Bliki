@@ -1,11 +1,9 @@
 ﻿using Bliki.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -31,9 +29,6 @@ namespace Bliki.Data
         {
             try
             {
-                var stopwatch = new Stopwatch();
-                stopwatch.Start();
-                Debug.WriteLine("Save started");
                 if (model.Title == null)
                 {
                     model.Title = "Unnamed";
@@ -42,18 +37,13 @@ namespace Bliki.Data
                 {
                     model.PageLink = CreatePageLink(model.Title);
                 }
-                Debug.WriteLine($"PageLink Created: {stopwatch.Elapsed}");
-                var json = JsonSerializer.Serialize(model);
-                Debug.WriteLine($"Json Serialized: {stopwatch.Elapsed}");
+                var file = BuildMarkdownFileContent(model);
                 var savePath = GetFilePath(model.PageLink);
-                File.WriteAllText(savePath, json);
-                Debug.WriteLine($"File saved: {stopwatch.Elapsed}");
+                File.WriteAllText(savePath, file);
                 Task.Run(async () =>
                 {
                     await _gitManager.Commit(model.PageLink);
                 });
-                Debug.WriteLine($"Git Commit called : {stopwatch.Elapsed}");
-                stopwatch.Stop();
                 return true;
             }
             catch(Exception ex)
@@ -63,14 +53,14 @@ namespace Bliki.Data
             }
         }
 
-        public IList<NavPageMeta> GetPageMetas()
+        public IList<NavPageMeta> GetNavMenuMetas()
         {
             var filePaths = Directory.GetFiles(_wikiPageDirectory);
             var result = new List<NavPageMeta>();
 
             foreach (var path in filePaths)
             {
-                var fileName = Path.GetFileName(path);
+                var fileName = Path.GetFileName(path).Replace(".md", "");
                 if (fileName == "bliki.exceptions") continue;
                 result.Add(new NavPageMeta(CreatePageTitle(fileName), fileName));
             }
@@ -81,18 +71,46 @@ namespace Bliki.Data
         public WikiPageModel LoadPage(string pageLink)
         {
             var filePath = GetFilePath(pageLink);
-            if (!File.Exists(filePath))
+            
+            if (File.Exists(filePath))
             {
-                return new WikiPageModel { Content = "# New Page", PageLink = pageLink, Title = "New Page" };
+                return BuildPageModel(filePath);
             }
-            var json = File.ReadAllText(filePath);
-            return JsonSerializer.Deserialize<WikiPageModel>(json);
+
+            return new WikiPageModel { Content = "# New Page", PageLink = pageLink, Title = "New Page" };
         }
 
 
         private string GetFilePath(string fileName)
         {
-            return Path.Combine(_wikiPageDirectory, fileName);
+            return Path.Combine(_wikiPageDirectory, $"{fileName}.md");
+        }
+
+
+        private WikiPageModel BuildPageModel(string filePath)
+        {
+            var content = File.ReadAllText(filePath);
+            var titleRgx = new Regex("<!-- TITLE: (.*) -->");
+            var title = titleRgx.Match(content).Value;
+            content = titleRgx.Replace(content, "");
+            var subTitleRgx = new Regex("<!-- SUBTITLE: (.*) -->");
+            var subTitle = subTitleRgx.Match(content).Value;
+            content = subTitleRgx.Replace(content, "").Trim();
+            return new WikiPageModel
+            {
+                Content = content,
+                Title = title,
+                SubTitle = subTitle,
+                PageLink = CreatePageLink(title)
+            };
+        }
+
+
+        private string BuildMarkdownFileContent(WikiPageModel model)
+        {
+            return $@"<!-- {model.Title} -->
+<!-- {model.SubTitle} -->
+{model.Content}";
         }
 
 

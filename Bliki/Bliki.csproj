@@ -18,14 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="WikiPages\home" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="WikiPages\home" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Markdig.Signed" Version="0.18.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.0" />
@@ -42,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MarkDig.Extensions\MarkDig.Extensions.fsproj" />
+    <ProjectReference Include="..\MarkDig.Extensions.FSharp\MarkDig.Extensions.FSharp.fsproj" />
   </ItemGroup>
 
 </Project>
