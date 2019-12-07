@@ -33,10 +33,13 @@ namespace Bliki.Data
                 {
                     model.Title = "Unnamed";
                 }
-                if (model.PageLink == null)
+
+                if (model.PageLink != CreatePageLink(model.Title))
                 {
+                    DeletePage(model.PageLink);
                     model.PageLink = CreatePageLink(model.Title);
                 }
+
                 var file = BuildMarkdownFileContent(model);
                 var savePath = GetFilePath(model.PageLink);
                 File.WriteAllText(savePath, file);
@@ -166,6 +169,12 @@ namespace Bliki.Data
                 LogException(ex);
                 return string.Empty;
             }
+        }
+
+
+        private void DeletePage(string link)
+        {
+
         }
 
         private readonly string _wikiPageDirectory = @"..\..\..\..\WikiPages";
