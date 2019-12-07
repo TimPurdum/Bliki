@@ -3,19 +3,22 @@
 @inherits IndexBase
 
 <div class="top-row px-4">
+    <div>
+        <h1>@PageModel.Title</h1>
+        <h2>@PageModel.SubTitle</h2>
+    </div>
     <AuthorizeView>
-
         <Authorized>
-            <a class="nav-link" href="@($"editor/{PageLink ?? "home"}")">
-                <span class="oi oi-pencil" aria-hidden="true"></span> Edit Page
-            </a>
-            <a class="nav-link" href="editor/new">
-                <span class="oi oi-plus" aria-hidden="true"></span> Create Page
-            </a>
+            <div style="position: absolute; right: 6px; display: flex">
+                <a class="nav-link" href="@($"editor/{PageLink ?? "home"}")">
+                    <span class="oi oi-pencil" aria-hidden="true"></span> Edit Page
+                </a>
+                <a class="nav-link" href="editor/new">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Create Page
+                </a>
+            </div>
         </Authorized>
     </AuthorizeView>
-    <LoginDisplay />
-    <a href="https://docs.microsoft.com/en-us/aspnet/" target="_blank">About</a>
 </div>
 
 <div class="content px-4">
