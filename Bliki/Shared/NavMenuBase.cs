@@ -1,6 +1,5 @@
 ﻿using Bliki.Data;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +26,7 @@ namespace Bliki.Shared
             try
             {
                 base.OnAfterRender(firstRender);
-                var metaList = _pageManager.GetPageMetas();
+                var metaList = _pageManager.GetNavMenuMetas();
                 if (!PageMetas.SequenceEqual(metaList))
                 {
                     PageMetas = metaList;

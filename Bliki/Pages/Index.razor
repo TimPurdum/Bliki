@@ -1,10 +1,10 @@
 ﻿@page "/"
-@page "/view/{PageLink}/"
 @page "/{PageLink}/"
 @inherits IndexBase
 
 <div class="top-row px-4">
     <AuthorizeView>
+
         <Authorized>
             <a class="nav-link" href="@($"editor/{PageLink ?? "home"}")">
                 <span class="oi oi-pencil" aria-hidden="true"></span> Edit Page

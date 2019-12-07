@@ -50,14 +50,14 @@ namespace Bliki.Pages
         {
             _pageManager.SavePage(PageModel);
             
-            _navManager.NavigateTo($"/view/{PageModel.PageLink}");
+            _navManager.NavigateTo($"/{PageModel.PageLink}");
         }
 
         protected void Cancel()
         {
             if (PageModel.PageLink != null)
             {
-                _navManager.NavigateTo($"/view/{PageModel.PageLink}");
+                _navManager.NavigateTo($"/{PageModel.PageLink}");
             }
             else
             {
