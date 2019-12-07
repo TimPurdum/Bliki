@@ -91,11 +91,25 @@ namespace Bliki.Data
         {
             var content = File.ReadAllText(filePath);
             var titleRgx = new Regex("<!-- TITLE: (.*) -->");
-            var title = titleRgx.Match(content).Value;
-            content = titleRgx.Replace(content, "");
+            var titleMatch = titleRgx.Match(content);
+            var title = "Page Title";
+            if (titleMatch.Success) 
+            {
+                title = titleMatch.Result("$1");
+                content = titleRgx.Replace(content, "");
+            }
+            
             var subTitleRgx = new Regex("<!-- SUBTITLE: (.*) -->");
-            var subTitle = subTitleRgx.Match(content).Value;
-            content = subTitleRgx.Replace(content, "").Trim();
+            var subTitle = "A Special Page";
+            var subMatch = subTitleRgx.Match(content);
+            if (subMatch.Success)
+            {
+                subTitle = subMatch.Result("$1");
+                content = subTitleRgx.Replace(content, "");
+            }
+
+            content = content.Trim();
+            
             return new WikiPageModel
             {
                 Content = content,
@@ -108,8 +122,8 @@ namespace Bliki.Data
 
         private string BuildMarkdownFileContent(WikiPageModel model)
         {
-            return $@"<!-- {model.Title} -->
-<!-- {model.SubTitle} -->
+            return $@"<!-- TITLE: {model.Title} -->
+<!-- SUBTITLE: {model.SubTitle} -->
 {model.Content}";
         }
 

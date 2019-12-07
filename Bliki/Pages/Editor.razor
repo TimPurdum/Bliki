@@ -3,16 +3,25 @@
 @inherits EditorBase
 
 <div class="top-row px-4">
-    <label>Title:</label>
-    <input @bind="PageModel.Title" />
-    <a @onclick="Save">
-        <span class="oi oi-check" aria-hidden="true"></span> Save
-    </a>
-    <a @onclick="Cancel">
-        <span class="oi oi-x" aria-hidden="true"></span> Cancel
-    </a>
-    <LoginDisplay />
-    <a href="https://docs.microsoft.com/en-us/aspnet/" target="_blank">About</a>
+    <div>
+        <div style="display: flex">
+            <label>Title:</label>
+            <input @bind="PageModel.Title" />
+        </div>
+        <div style="display: flex">
+            <label>SubTitle:</label>
+            <input @bind="PageModel.SubTitle" />
+        </div>
+    </div>
+    <div style="position: absolute; right: 6px; display: flex">
+        <a class="nav-link" @onclick="Save">
+            <span class="oi oi-check" aria-hidden="true"></span> Save
+        </a>
+        <a class="nav-link" @onclick="Cancel">
+            <span class="oi oi-x" aria-hidden="true"></span> Cancel
+        </a>
+    </div>
+    
 </div>
 
 <div class="content px-4" style="position: fixed; top: 3.7rem; bottom: 6px; left: 254px; right: 4px;">
