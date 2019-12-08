@@ -4,6 +4,6 @@ namespace Bliki.Interfaces
 {
     public interface IGitManager
     {
-        Task Commit(string fileName);
+        Task Commit(string fileName, string? userName, bool delete = false);
     }
 }

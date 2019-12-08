@@ -8,7 +8,7 @@ namespace Bliki.Data
 {
     public class GitManager: IGitManager
     {
-        public async Task Commit(string fileName)
+        public async Task Commit(string fileName, string? userName, bool delete = false)
         {
             await Task.Run(() =>
             {
@@ -19,9 +19,9 @@ namespace Bliki.Data
                         shell.Runspace.ResetRunspaceState();
                         shell.Runspace.Open();
                     }
-
+                    
                     shell.AddScript(@"git add *");
-                    shell.AddScript($@"git commit -m 'Saving file {fileName} at {DateTime.Now.ToString()}'");
+                    shell.AddScript($@"git commit -m '{(delete ? "Deleting" : "Saving")} file {fileName} at {DateTime.Now.ToString()} by {userName}'");
                     shell.AddScript(@"git push");
                     var results = shell.Invoke();
                 }

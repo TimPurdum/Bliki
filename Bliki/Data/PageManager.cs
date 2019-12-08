@@ -25,7 +25,7 @@ namespace Bliki.Data
             _wikiPageDirectory = wikiDirectory;
         }
 
-        public bool SavePage(WikiPageModel model)
+        public bool SavePage(WikiPageModel model, string? userName)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace Bliki.Data
 
                 if (model.PageLink != CreatePageLink(model.Title))
                 {
-                    DeletePage(model.PageLink);
+                    DeletePage(model.PageLink, userName);
                     model.PageLink = CreatePageLink(model.Title);
                 }
 
@@ -45,7 +45,7 @@ namespace Bliki.Data
                 File.WriteAllText(savePath, file);
                 Task.Run(async () =>
                 {
-                    await _gitManager.Commit(model.PageLink);
+                    await _gitManager.Commit(model.PageLink, userName);
                 });
                 return true;
             }
@@ -172,12 +172,16 @@ namespace Bliki.Data
         }
 
 
-        private void DeletePage(string link)
+        public void DeletePage(string link, string? userName)
         {
             var path = GetFilePath(link);
             if (File.Exists(path))
             {
                 File.Delete(path);
+                Task.Run(async () =>
+                {
+                    await _gitManager.Commit(link, userName, true);
+                });
             }
         }
 
