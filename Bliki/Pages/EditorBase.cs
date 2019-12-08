@@ -1,6 +1,7 @@
 ﻿using Bliki.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.AspNetCore.Http;
 using System;
 
 namespace Bliki.Pages
@@ -13,6 +14,8 @@ namespace Bliki.Pages
         private PageManager _pageManager { get; set; } = default!;
         [Inject]
         private NavigationManager _navManager { get; set; } = default!;
+        [Inject]
+        private IHttpContextAccessor _httpContextAccessor { get; set; } = default!;
 
         protected WikiPageModel PageModel { get; set; } = new WikiPageModel();
 
@@ -48,14 +51,14 @@ namespace Bliki.Pages
 
         protected void Save()
         {
-            _pageManager.SavePage(PageModel);
+            _pageManager.SavePage(PageModel, _httpContextAccessor.HttpContext.User.Identity.Name);
             
             _navManager.NavigateTo($"/{PageModel.PageLink}");
         }
 
         protected void Cancel()
         {
-            if (PageModel.PageLink != null)
+            if (PageModel.PageLink != "new-page")
             {
                 _navManager.NavigateTo($"/{PageModel.PageLink}");
             }
@@ -77,6 +80,15 @@ namespace Bliki.Pages
                 PageModel = _pageManager.LoadPage(PageLink);
             }
             StateHasChanged();
+        }
+
+
+        protected void Delete()
+        {
+            if (PageModel.PageLink != "new-page")
+            {
+                _pageManager.DeletePage(PageLink, _httpContextAccessor.HttpContext.User.Identity.Name);
+            }
         }
     }
 }

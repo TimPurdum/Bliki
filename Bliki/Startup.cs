@@ -35,6 +35,7 @@ namespace Bliki
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddScoped<PageManager>();
             services.AddScoped(typeof(IGitManager), typeof(GitManager));
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
