@@ -49,12 +49,14 @@ namespace Bliki.Pages
             }
         }
 
+
         protected void Save()
         {
             _pageManager.SavePage(PageModel, _httpContextAccessor.HttpContext.User.Identity.Name);
             
             _navManager.NavigateTo($"/{PageModel.PageLink}");
         }
+
 
         protected void Cancel()
         {

@@ -12,6 +12,7 @@ a, .btn-link {
     font-size: 28px;
     color: #3f51b5;
     font-weight: 300;
+    margin-top: 4px;
 }
 
 .top-row h2 {
@@ -19,6 +20,14 @@ a, .btn-link {
     color: #9e9e9e;
     font-weight: 400;
 }
+
+.sidebar h1 {
+    font-size: 20px;
+    color: white;
+    font-weight: 600;
+    margin: 12px;
+}
+
 
 .render h1 {
     background-color: #eceff1;
@@ -94,6 +103,7 @@ pre {
     background-color: #f7f7f7;
     border-bottom: 1px solid #d6d5d5;
     position: relative;
+    min-height: 75px;
 }
 
 .main .top-row > a {
@@ -102,10 +112,13 @@ pre {
 
 .sidebar {
     background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+    height: 100%;
+    overflow: auto;
 }
 
 .sidebar .top-row {
     background-color: rgba(0,0,0,0.4);
+    position: relative;
 }
 
 .sidebar .navbar-brand {
@@ -159,6 +172,14 @@ pre {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+.sidebar .nav-link {
+    color: white;
+}
+
+.sidebar .nav-link:hover {
+    color: aqua;
+}
+
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -190,6 +211,11 @@ pre {
     }
 
     .main .top-row {
+        position: sticky;
+        top: 0;
+    }
+
+    .sidebar .top-row {
         position: sticky;
         top: 0;
     }

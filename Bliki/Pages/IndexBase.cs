@@ -1,36 +1,58 @@
 ﻿using Bliki.Data;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.JSInterop;
 using System;
+using System.Threading.Tasks;
 
 namespace Bliki.Pages
 {
     public class IndexBase : ComponentBase
     {
         [Parameter]
-        public string PageLink { get; set; } = "home";
+        public string? PageLink { get; set; }
+        [Parameter]
+        public string? SectionLink { get; set; }
+            
         [Inject]
         private PageManager _pageManager { get; set; } = default!;
+        [Inject]
+        protected NavigationManager _navManager { get; set; } = default!;
+        [Inject]
+        protected IJSRuntime _jsRuntime { get; set; } = default!;
 
         protected WikiPageModel PageModel { get; set; } = new WikiPageModel();
 
-        protected override void OnInitialized()
+
+        protected override void OnParametersSet()
         {
-            
-            base.OnInitialized();
+            base.OnParametersSet();
+            if (PageLink == null) _navManager.NavigateTo("home", true);
+            PageModel = _pageManager.LoadPage(string.IsNullOrEmpty(PageLink) ? "home" : PageLink);
         }
 
-        protected override void OnAfterRender(bool firstRender)
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            await base.OnAfterRenderAsync(firstRender);
             try
             {
-                base.OnAfterRender(firstRender);
+                if (string.IsNullOrEmpty(PageLink))
+                {
+                    _navManager.NavigateTo("/home", true);
+                }
                 var model = _pageManager.LoadPage(PageLink ?? "home");
 
-                if (PageModel != model)
+                if (!PageModel.Equals(model))
                 {
                     PageModel = model;
                     StateHasChanged();
+                }
+
+                if (SectionLink != _previousSectionLink &&
+                        !string.IsNullOrEmpty(SectionLink))
+                {
+                    await ScrollToElementId(SectionLink);
+                    _previousSectionLink = SectionLink;
                 }
             }
             catch (Exception ex)
@@ -39,17 +61,18 @@ namespace Bliki.Pages
             }
         }
 
-
-        protected override void BuildRenderTree(RenderTreeBuilder builder)
+        protected void SectionNavigationHandler(string elementId)
         {
-            try
-            {
-                base.BuildRenderTree(builder);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            StateHasChanged();
         }
+
+        private async Task ScrollToElementId(string elementId)
+        {
+            await _jsRuntime
+                .InvokeVoidAsync("scrollToElementId", new[] { elementId });
+        }
+
+
+        private string _previousSectionLink = "";
     }
 }

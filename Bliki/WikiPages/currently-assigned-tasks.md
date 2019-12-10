@@ -1,0 +1,101 @@
+<!-- TITLE: Currently Assigned Tasks -->
+<!-- SUBTITLE: Who's Doing Whatnow -->
+
+# Tasks
+This post is should be kept up-to-date:
+
+- Ande
+	- F2299 - Police blotter report
+	- B4533 - NTEXT columns need to be converted to NVARCHAR(MAX)
+	- Doug suggested that Ande's next project should be helping Tim P with IL and OH Incidents
+- Dan
+	- ProQA recertification
+	- Civility
+- Joe
+	- Add unit tests to Jenkins
+	- F2069 - Port Reviewals to .NET
+		- Add support for OH and IL
+- Josh
+	- F2069 - Port Reviewals to .NET
+		- Add support for OH and IL
+	- F2433 - Xamarin PageDoc control library
+	- F2367 - Port Evidence module to .NET
+	- B4275 - Buttons on Involvement Report working
+	- F1988 - Poncho
+- Mike S
+	- F2434 - Port OH Crash module to .NET
+- Robert
+	- F2048 - OH Citations
+	- F2367 - Port Evidence module to .NET
+	- Rewrite other legacy citation modules (ticket numbers forthcoming)
+- Steve
+	- F2405 - Make JMS.NET use the new Attachments Web API via IdnCoreService
+	- F2436 - Make JMS.NET use the new Support Data Web API via IdnCoreService
+	- B4504 - Clicking Edit on a supplement report makes whole report group editable
+	- B4528 - Web-services logging and emailing HttpRequestException when client closes connection
+	- F2100 - Add workstation licensing to security
+	- F2041 - Refactor login screen to use IdnCoreService
+	- F1942 - Security Web API
+	- F1988 - Poncho
+- Tim J
+	- B4521 - SOAP-mode rewrite into .NET/Web-API
+- Tim P
+	- F2272 - Rewrite Illinois incident module
+	- F2271 - Rewrite Ohio incident module
+	- B4234 - DataExpansionControl Not Working with Undo/Redo
+- Unassigned
+	- F2273 - Add MS Word integration as option instead of built-in narrative editor
+	- F1642 - Narrative Editor Re-Write
+	- F2423 - VA crash interface (TREDS)
+	- F2091 - Rewrite Security and Welfare Checks module in .NET
+	- F2122 - Rewrite Warrants
+	- F2357 - Press Release page
+	- F2036 - Add security permissions for Juvenile incidents
+	- F1490 - Ability to mark incidents as sensitive
+	- Port FingerRoll to .NET
+	- QB Rewrite
+	- Scheduling Engine (need/want to be able to run any/all of our various IDN Page Reports on a schedule (like we do in QB) outside of each application using parameters)
+	- F2170 - IOR Statistics Reports: Incident People Report by Incident#
+	- F2171 - IOR Statistics Reports: Incident People Report by Person Type / Name
+	- F2172 - IOR Statistics Reports: Incident Property Report by Date Reported
+	- F2173 - IOR Statistics Reports: Incident Property Report by Incident #
+	- F2174 - IOR Statistics Reports: Incident Property Report by Serial #
+	- F2175 - IOR Statistics Reports: Incident Reports by Name
+	- F2176 - IOR Statistics Reports: Incident Report by Case Clearance
+	- F2177 - IOR Statistics Reports: Incident Reports by Date Reported
+	- F2178 - IOR Statistics Reports: Incident Reports by Township/Patrol Area/Grid
+	- F2179 - IOR Statistics Reports: Incident Reports by Incident #
+	- F2180 - IOR Statistics Reports: Incident Reports by Object of Attack
+	- F2181 - IOR Statistics Reports: Incident Reports by Offense
+	- F2182 - IOR Statistics Reports: Incident Reports by Reporting Officer
+	- F2183 - IOR Statistics Reports: Incident Reports by Shift / Officer
+	- F2184 - IOR Statistics Reports: Incident Supervisors Report
+	- F2185 - IOR Statistics Reports: Incident Suspect Report by Report Number
+	- F2186 - IOR Statistics Reports: Incident Suspect Report by Name
+	- F2187 - IOR Statistics Reports: Incident Suspect Report by SSN
+	- F2188 - IOR Statistics Reports: UCR/IBR Annual Comparison
+	- F2189 - IOR Statistics Reports: UCR/IBR Report
+	- New Pawn Module
+	- New Registrations Module (Weapons Permits)
+	- New Shared Bolo Application
+	- New Animal Control Module
+	- F2422 - Expunge person from reports, without deleting entire report
+	- F1634 - Case management
+	- F1572 - Import images from master name search
+	- F2136 - Agency info maintenenace utility
+	- F2137 - Local ordinance maintenance utility
+	- F2297 - TN IBR
+	- F2041 - Refactor login screen to use IdnCoreService
+	- F2133 - IBR submission history per incident
+	- F2135 - Force IBR submission of incident
+	- F2037 - Create WPF version of Poncho controls
+	- F1606 - Supplements redesign
+	- F2102 - Show GUIDs in Security
+	- F2194 - Add support for Field Contact file reports to the Core service
+	- F2195 - Add support for Security Welfare Check file reports to the Core service
+	- F2196 - Add support for Contact Manager file reports to the Core service
+	- F2197 - Add support for Michigan Incident file reports to the Core service
+	- F2199 - Add support for Illinois Crash file reports to the Core Service
+	- F2200 - Add support for Ohio Crash file reports to the Core Service
+	- F2201 - Add support for Michigan Crash file reports to the Core Service
+	- F2202 - Add support for Parking Ticket file reports to the Core Service

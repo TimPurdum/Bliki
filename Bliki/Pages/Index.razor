@@ -1,11 +1,13 @@
 ﻿@page "/"
-@page "/{PageLink}/"
+@page "/{PageLink}"
+@page "/{PageLink}/{SectionLink}"
+
 @inherits IndexBase
 
 <div class="top-row px-4">
     <div>
-        <h1>@PageModel.Title</h1>
-        <h2>@PageModel.SubTitle</h2>
+        <h1>@PageModel?.Title</h1>
+        <h2>@PageModel?.SubTitle</h2>
     </div>
     <AuthorizeView>
         <Authorized>
@@ -22,12 +24,12 @@
 </div>
 
 <div class="content px-4 render">
-    @if (PageModel?.Content != null)
+    @if (PageModel?.Content != null && PageModel?.Content != "")
     {
-        <MarkdownRenderer Content="@PageModel.Content" />
+        <MarkdownRenderer Content="@PageModel?.Content" />
     }
     else
     {
-        <p>No content found</p>
+        _navManager.NavigateTo("home", true);
     }
 </div>
