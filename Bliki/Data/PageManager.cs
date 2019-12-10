@@ -1,4 +1,5 @@
 ﻿using Bliki.Interfaces;
+using Markdig.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -16,7 +17,7 @@ namespace Bliki.Data
         public PageManager(IGitManager gitManager)
         {
             _gitManager = gitManager;
-            _wikiPageDirectory = FindWikiPageDirectory(Directory.GetCurrentDirectory());
+            FindWikiPageDirectory(Directory.GetCurrentDirectory());
         }
 
         public PageManager(IGitManager gitManager, string wikiDirectory)
@@ -71,8 +72,36 @@ namespace Bliki.Data
             return result;
         }
 
+
+        public IList<NavPageMeta> GetCurrentPageHeaders(string pageLink)
+        {
+            var pageModel = LoadPage(string.IsNullOrEmpty(pageLink) ? "home" : pageLink);
+            var result = new List<NavPageMeta>();
+            var mdDoc = Markdig.Markdown.Parse(pageModel.Content);
+            var tw = new StringWriter();
+            foreach (var block in mdDoc)
+            {
+                if (block is HeadingBlock heading)
+                {
+                    var content = heading.Inline.FirstChild.ToString();
+                    
+                    if (content != null)
+                    {
+                        result.Add(new NavPageMeta(content, CreatePageLink(content)));
+                    }
+                }
+            }
+
+            return result;
+        }
+
+
         public WikiPageModel LoadPage(string pageLink)
         {
+            if (string.IsNullOrEmpty(pageLink))
+            {
+                pageLink = "home";
+            }
             var filePath = GetFilePath(pageLink);
             
             if (File.Exists(filePath))
@@ -154,20 +183,26 @@ namespace Bliki.Data
         }
 
 
-        private string FindWikiPageDirectory(string path)
+        private void FindWikiPageDirectory(string path)
         {
             try
             {
-                if (Directory.Exists(Path.Combine(path, "WikiPages")))
+                var wikiPath = Path.Combine(path, "WikiPages");
+                _wikiPageDirectory = wikiPath;
+                if (!Directory.Exists(wikiPath))
                 {
-                    return Path.Combine(path, "WikiPages");
+                    Directory.CreateDirectory(wikiPath);
+                    SavePage(new WikiPageModel
+                    {
+                        Title = "Home",
+                        PageLink = "home",
+                        Content = "# Welcome to Bliki!\n## The Blazor-Powered Wiki"
+                    }, "Bliki");
                 }
-                return FindWikiPageDirectory(Directory.GetParent(path).FullName);
             }
             catch (Exception ex)
             {
                 LogException(ex);
-                return string.Empty;
             }
         }
 
@@ -185,6 +220,6 @@ namespace Bliki.Data
             }
         }
 
-        private readonly string _wikiPageDirectory = @"..\..\..\..\WikiPages";
+        private string _wikiPageDirectory = @"WikiPages";
     }
 }

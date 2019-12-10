@@ -1,0 +1,47 @@
+<!-- TITLE: Feature Implementation Workflow -->
+<!-- SUBTITLE: How to Do What We Do -->
+
+# Feature Implementation
+- Create Axosoft ticket if one doesn't already exist
+- Update Axosoft ticket
+    - Set `Workflow Step` to `Feature Being Developed`
+    - Set `Assigned To` to your name
+- Take feature-branch from `master` using the following naming convention:
+    - Regex: `(?<ticketType>[fb])(?<ticketNum>\d+)_(?<shortDesc>([a-z0-9]+)(_[a-z0-9]+)*)` 
+    - Example: `f1599_arrest_media_report`
+- If extended discussion is needed, create a public Slack channel named similarly to the feature-branch
+- Implement in feature-branch
+    - Keep the To-Do list in `Documentation\ToDo.md` up to date
+    - Push feature-branch to Git server regularly for backup, sharing, and review
+    - At least weekly, merge the latest from `master` into the feature-branch to keep it fresh and free of conflicts (don't squash or else merge conflicts will need to be resolved again when merging back into master)
+    - Hints:
+      - Including the ticket number in every commit message makes it easier to find all the commits related to the branch, since merging master into the feature branch will clutter the history.
+      - Try to limit changes on the feature branch to only ones which are directly related to the feature and which can't be safely merged into master until the feature is complete.  Things like reformatting, refactoring, restructuring, reorganizing, and translating (e.g. VB to C#) of existing common code are best done in a separate branch which can be merged into `master` ASAP.  Doing so makes those changes available to all branches sooner, reduces merge conflicts, and simplifies code-reviews.
+- Run `IdnSolutionIntegrityChecker` on your branch, and fix warnings/bugs
+- Ask for a code review
+	- If the reviewer finds any problems, they should add those items to `Documentation\ToDo.md`
+- Merge and squash feature-branch into `master`
+    - `git checkout master`
+    - `git pull`
+    - `git merge --no-commit --squash my_feature_branch`
+    - Fix conflicts, if there are any
+    - Ensure no changes have been made to `Documentation\ToDo.md`
+    - Ensure it compiles and still works
+    - Commit the merge with a simple message that includes the ticket number and title (e.g. "F1599 Arrest Media Report")
+    - Push `master` to the Git server
+- Delete feature-branch from local repository and Git server
+- Update Axosoft feature ticket 
+    - Set `Primary Assembly` to one of the ones that was modified
+    - Set `Planned Build Number` to the next build number of the primary assembly
+    - Add a `Developer Note`, if necessary, to specify versions in other branches as well as versions of required COM dependencies and required DB Schemas
+    - Set `Workflow Step` to `Ready for Testing`
+    - Set `Assigned To` to `Allen Sharrer`
+- Wait for Allen to update the QA system (when done, he will reassign the ticket back to you)
+- Test on the QA system
+- Update Axosoft feature ticket 
+    - Add a developer note indicating that it has been tested in QA
+    - Set `Workflow Step` to `Feature Awaiting Customer Approval`
+    - Set `Assigned To` to the appropriate PM (Doug for RMS, Helen for CAD)
+- Add an item to the agenda for the next Puffin meeting to demo the feature
+- Remove from the [Currently Assigned Tasks](currently-assigned-tasks) page
+- If a Slack channel was created for the feature, archive the channel

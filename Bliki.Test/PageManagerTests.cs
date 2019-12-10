@@ -24,7 +24,7 @@ namespace Bliki.Test
             var savePath = @"..\..\..\WikiPages\test-page-1";
 
             // Act
-            var result = manager.SavePage(testPageModel);
+            var result = manager.SavePage(testPageModel, "test");
 
             // Assert
             Assert.IsTrue(result);

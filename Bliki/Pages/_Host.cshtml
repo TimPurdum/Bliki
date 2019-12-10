@@ -11,6 +11,25 @@
     <base href="~/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link href="css/site.css" rel="stylesheet" />
+    <script>
+        window.scrollToElementId = (elementId) => {
+            console.info('scrolling to element', elementId);
+            var element = document.getElementById(elementId);
+            if (!element) {
+                console.warn('element was not found', elementId);
+                return false;
+            }
+            var headerOffset = 80;
+    	    var elementPosition = element.getBoundingClientRect().top;
+            var offsetPosition = elementPosition - headerOffset;
+      
+              window.scrollTo({
+                  top: offsetPosition,
+                  behavior: "smooth"
+              });   
+            return true;
+        }
+    </script>
 </head>
 <body>
     <app>

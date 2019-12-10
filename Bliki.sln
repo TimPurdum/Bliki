@@ -5,7 +5,11 @@ VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bliki", "Bliki\Bliki.csproj", "{9A003FC2-8A99-4F9C-A98F-EB75ACDD58D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bliki.Test", "Bliki.Test\Bliki.Test.csproj", "{F33207E1-C5BB-48D3-B201-0BDB5A9D6441}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bliki.Test", "Bliki.Test\Bliki.Test.csproj", "{F33207E1-C5BB-48D3-B201-0BDB5A9D6441}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "MarkDig.Extensions.FSharp", "MarkDig.Extensions.FSharp\MarkDig.Extensions.FSharp.fsproj", "{ACF5690D-BB0C-4168-9198-CD06A5020CCF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarkDig.Extensions", "MarkDig.Extensions\MarkDig.Extensions.csproj", "{6F738B20-AA51-4868-8775-02AB9DD7DEF5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{F33207E1-C5BB-48D3-B201-0BDB5A9D6441}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F33207E1-C5BB-48D3-B201-0BDB5A9D6441}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F33207E1-C5BB-48D3-B201-0BDB5A9D6441}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACF5690D-BB0C-4168-9198-CD06A5020CCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACF5690D-BB0C-4168-9198-CD06A5020CCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACF5690D-BB0C-4168-9198-CD06A5020CCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACF5690D-BB0C-4168-9198-CD06A5020CCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F738B20-AA51-4868-8775-02AB9DD7DEF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F738B20-AA51-4868-8775-02AB9DD7DEF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F738B20-AA51-4868-8775-02AB9DD7DEF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F738B20-AA51-4868-8775-02AB9DD7DEF5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
