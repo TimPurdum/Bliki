@@ -1,0 +1,50 @@
+﻿<div class="toolbar" style="@Style">
+    <a class="btn btn-sm toolbar-btn@(Bold ? "-selected": "")"
+       @onclick="() => Click(ToolbarButton.Bold)">
+        <span class="oi oi-bold"></span>
+    </a>
+    <a class="btn btn-sm toolbar-btn@(Italic ? "-selected": "")"
+       @onclick="() => Click(ToolbarButton.Italic)">
+        <span class="oi oi-italic"></span>
+    </a>
+    <a class="btn btn-sm toolbar-btn@(Strikethrough ? "-selected": "")"
+       @onclick="() => Click(ToolbarButton.Strikethrough)">
+        <span id="strikethrough">S</span>
+    </a>
+    <a class="btn btn-sm toolbar-btn@(Header1 ? "-selected": "")"
+       @onclick="() => Click(ToolbarButton.Header1)">
+        <span class="oi oi-header">1</span>
+    </a>
+    <a class="btn btn-sm toolbar-btn@(Header2 ? "-selected": "")"
+       @onclick="() => Click(ToolbarButton.Header2)">
+        <span class="oi oi-header">2</span>
+    </a>
+    <a class="btn btn-sm toolbar-btn@(Header3 ? "-selected": "")"
+       @onclick="() => Click(ToolbarButton.Header3)">
+        <span class="oi oi-header">3</span>
+    </a>
+</div>
+
+@code {
+    [Parameter]
+    public string Style { get; set; } = "";
+    [Parameter]
+    public bool Bold { get; set; }
+    [Parameter]
+    public bool Italic { get; set; }
+    [Parameter]
+    public bool Strikethrough { get; set; }
+    [Parameter]
+    public bool Header1 { get; set; }
+    [Parameter]
+    public bool Header2 { get; set; }
+    [Parameter]
+    public bool Header3 { get; set; }
+    [Parameter]
+    public EventCallback<ToolbarButton> ButtonClick { get; set; }
+
+    private async void Click(ToolbarButton btn)
+    {
+        await ButtonClick.InvokeAsync(btn);
+    }
+}

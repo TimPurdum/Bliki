@@ -37,4 +37,8 @@
     <ProjectReference Include="..\MarkDig.Extensions.FSharp\MarkDig.Extensions.FSharp.fsproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="WikiPages\" />
+  </ItemGroup>
+
 </Project>

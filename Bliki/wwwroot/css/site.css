@@ -41,10 +41,6 @@ a, .btn-link {
     display: block;
     border: 0;
     vertical-align: baseline;
-    margin-block-start: 0.67em;
-    margin-block-end: 0.67em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
 }
 
 .render h2 {
@@ -62,10 +58,6 @@ a, .btn-link {
     padding: 7px 20px;
     font-weight: 500;
     vertical-align: baseline;
-    margin-block-start: 0.83em;
-    margin-block-end: 0.83em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
 }
 
 .btn-primary {
@@ -97,6 +89,32 @@ pre {
 
 .main {
     flex: 1;
+}
+
+.toolbar {
+    display: flex;
+}
+
+.toolbar a:not([href]):not([tabindex]) {
+    
+}
+
+.toolbar-btn {
+     border: 1px solid black;
+     border-radius: 3px;
+     align-content: center;
+}
+
+.toolbar-btn:hover {
+    border: 2px solid blue;
+    background: lightblue;
+}
+
+.toolbar-btn-selected {
+    border: 2px solid blue;
+    border-radius: 3px;
+    background: lightblue;
+    color: lightgoldenrodyellow !important;
 }
 
 .main .top-row {
@@ -190,6 +208,17 @@ pre {
 
 .validation-message {
     color: red;
+}
+
+
+#strikethrough {
+    font-weight: bolder;
+    font-stretch: expanded;
+    font-family: 'Baskerville Old Face';
+    line-height: 18px;
+    font-size: 22px;
+    text-decoration: line-through;
+    vertical-align: text-bottom;
 }
 
 @media (max-width: 767.98px) {

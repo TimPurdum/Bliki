@@ -30,6 +30,7 @@ namespace Bliki
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddScoped<PageManager>();
             services.AddScoped(typeof(IGitManager), typeof(GitManager));
+            services.AddScoped<MarkdownEditorManager>();
             services.AddHttpContextAccessor();
         }
 

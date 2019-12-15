@@ -29,6 +29,26 @@
               });   
             return true;
         }
+
+        window.getCursorPosition = (elementId) => {
+            var element = document.getElementById(elementId);
+            var start = element.selectionStart;
+            var end = element.selectionEnd;
+            return [start, end];
+        }
+
+        window.resetCursorPosition = (elementId, start, end) => {
+            var element = document.getElementById(elementId);
+            element.selectionStart = start;
+            element.selectionEnd = end;
+        }
+
+        window.focusOnElement = (elementId, start, end) => {
+            var element = document.getElementById(elementId);
+            element.focus();
+            element.selectionStart = start;
+            element.selectionEnd = end;
+        }
     </script>
 </head>
 <body>
