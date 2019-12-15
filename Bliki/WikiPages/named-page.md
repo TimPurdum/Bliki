@@ -1,4 +1,4 @@
-<!-- TITLE: New Page -->
+<!-- TITLE: named page -->
 <!-- SUBTITLE:  -->
 # New Page
 
