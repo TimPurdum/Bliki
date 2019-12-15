@@ -16,5 +16,8 @@ C:\git\Bliki> git init
 ```
 Now, whenever a page is saved, **Bliki** automatically calls the following commands.
 ```
-
+C:\git\Bliki> git add  *
+C:\git\Bliki> git commit -m "Saving file *filename* at *time* by *username*
+C:\git\Bliki> git push
 ```
+### Editor
