@@ -51,7 +51,7 @@ namespace Bliki.Data
                 {
                     await _gitManager.Commit(model.PageLink, userName);
                 });
-                if (_editingSessions.FirstOrDefault(s => s.PageModel == model) is EditingSession session)
+                if (_editingSessions.FirstOrDefault(s => s.PageModel.Equals(model)) is EditingSession session)
                 {
                     _editingSessions.Remove(session);
                 }
