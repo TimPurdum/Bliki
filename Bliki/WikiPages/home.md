@@ -21,3 +21,5 @@ C:\git\Bliki> git commit -m "Saving file *filename* at *time* by *username*
 C:\git\Bliki> git push
 ```
 ### Editor
+The editor uses standard Markdown, and is designed to handle simple keyboard shortcuts.
+- `ctrl-b`: **Bold**

@@ -45,7 +45,7 @@ namespace Bliki.Data
         {
             var before = start > 0 ? content.Substring(0, start) : "";
             var after = end < content.Length ? content.Substring(end, content.Length - end) : "";
-            var selected = start > 0 && end < content.Length ? content.Substring(start, end - start) : content;
+            var selected = start >= 0 && end <= content.Length ? content.Substring(start, end - start) : content;
 
             var regex = new Regex($@"(?:^|[^\*])({marker.RegexValue})(?:[^\*]|$)");
             var markersFound = 0;
