@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Bliki.Shared
 {
-    public class NavMenuBase : ComponentBase
+    public partial class NavMenu
     {
         [Inject]
         private PageManager _pageManager { get; set; } = default!;

@@ -54,6 +54,13 @@ namespace Bliki.Data
             if (regex.Matches(after).Count % 2 == 1)
             {
                 markersFound++;
+                // Special case: if the cursor is right before the final mark, jump outside.
+                if (start == end && after.IndexOf(marker.Value) == 0 &&
+                    before.LastIndexOf(marker.Value) < start - 2)
+                {
+                    return new ToggleResult(content, marker.Value.Length);
+                }
+
                 var firstAfterPosition = after.IndexOf(marker.Value) + end;
                 content = content.Remove(firstAfterPosition, 2);
             }
@@ -106,10 +113,6 @@ namespace Bliki.Data
         }
 
 
-        private readonly Regex _boldRegex = new Regex(@"(?:^|[^\*])(\*\*)(?:[^\*]|$)");
-        private readonly Regex _italicRegex = new Regex(@"(?:^|[^\*])(\*)(?:[^\*]|$)");
-        private readonly Regex _strikethroughRegex = new Regex(@"(?:^|[^~])(~~)(?:[^~]|$)");
         private readonly Regex _lineBreakRegex = new Regex("\r\n|\r|\n");
-        private const string _boldMarker = "**";
     }
 }

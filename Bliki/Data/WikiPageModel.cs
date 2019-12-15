@@ -1,23 +1,11 @@
-﻿using System.ComponentModel;
-
-namespace Bliki.Data
+﻿namespace Bliki.Data
 {
-    public class WikiPageModel : INotifyPropertyChanged
+    public class WikiPageModel
     {
-        private string content = "";
-
         public string? Title { get; set; }
         public string PageLink { get; set; } = "new-page";
-        public string Content {
-            get => content; set {
-                content = value;
-                PropertyChanged?
-                    .Invoke(this, new PropertyChangedEventArgs("Content"));
-            }
-        }
+        public string Content { get; set; } = "";
         public string SubTitle { get; set; } = "";
-
-        public event PropertyChangedEventHandler? PropertyChanged;
 
         public override bool Equals(object? obj)
         {

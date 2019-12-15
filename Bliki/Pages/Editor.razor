@@ -1,6 +1,5 @@
 ﻿@page "/editor"
 @page "/editor/{PageLink}"
-@inherits EditorBase
 
 <div class="top-row px-4">
     <div>
@@ -12,10 +11,6 @@
             <label>SubTitle:</label>
             <input @bind="PageModel.SubTitle" />
         </div>
-    </div>
-    <div>
-        <p>Start: @_selectionStart; End: @_selectionEnd</p>
-        <p>Before: "@_beforePosition"; After: "@_afterPosition"</p>
     </div>
     <div style="position: absolute; right: 6px; display: flex">
         <a href="" class="nav-link" @onclick="Save">
