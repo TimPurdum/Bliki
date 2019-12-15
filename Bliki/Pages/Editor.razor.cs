@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -28,6 +26,10 @@ namespace Bliki.Pages
         public bool Header2 { get; set; }
         [Parameter]
         public bool Header3 { get; set; }
+        [Parameter]
+        public bool InlineCode { get; set; }
+        [Parameter]
+        public bool CodeBlock { get; set; }
         [Inject]
         private PageManager _pageManager { get; set; } = default!;
         [Inject]
@@ -78,6 +80,7 @@ namespace Bliki.Pages
 
         protected void Cancel()
         {
+            _pageManager.Cancel(PageModel);
             if (PageModel.PageLink != "new-page")
             {
                 _navManager.NavigateTo($"/{PageModel.PageLink}");
@@ -123,6 +126,9 @@ namespace Bliki.Pages
                         break;
                     case "i":
                         await ApplyStyling(ToolbarButton.Italic);
+                        break;
+                    case "s":
+                        Save();
                         break;
                 }
             }
@@ -179,39 +185,54 @@ namespace Bliki.Pages
 
         private async Task ApplyStyling(ToolbarButton button)
         {
-            await CheckFormattingPosition();
-            ToggleResult toggleResult = new ToggleResult(PageModel.Content, 0);
-            switch (button)
+            try
             {
-                case ToolbarButton.Bold:
-                    toggleResult = _editorManager
-                            .ToggleMarker(TextMarkers.Bold, PageModel.Content, _selectionStart, _selectionEnd);
-                    break;
-                case ToolbarButton.Italic:
-                    toggleResult = _editorManager
-                            .ToggleMarker(TextMarkers.Italic, PageModel.Content, _selectionStart, _selectionEnd);
-                    break;
-                case ToolbarButton.Strikethrough:
-                    toggleResult = _editorManager
-                            .ToggleMarker(TextMarkers.Italic, PageModel.Content, _selectionStart, _selectionEnd);
-                    break;
-                case ToolbarButton.Header1:
-                    toggleResult = _editorManager
-                            .ToggleHeader(1, PageModel.Content, _selectionStart);
-                    break;
-                case ToolbarButton.Header2:
-                    toggleResult = _editorManager
-                            .ToggleHeader(2, PageModel.Content, _selectionStart);
-                    break;
-                case ToolbarButton.Header3:
-                    toggleResult = _editorManager
-                            .ToggleHeader(3, PageModel.Content, _selectionStart);
-                    break;
+                await CheckFormattingPosition();
+                ToggleResult toggleResult = new ToggleResult(PageModel.Content, 0);
+                switch (button)
+                {
+                    case ToolbarButton.Bold:
+                        toggleResult = _editorManager
+                                .ToggleMarker(TextMarkers.Bold, PageModel.Content, _selectionStart, _selectionEnd);
+                        break;
+                    case ToolbarButton.Italic:
+                        toggleResult = _editorManager
+                                .ToggleMarker(TextMarkers.Italic, PageModel.Content, _selectionStart, _selectionEnd);
+                        break;
+                    case ToolbarButton.Strikethrough:
+                        toggleResult = _editorManager
+                                .ToggleMarker(TextMarkers.Italic, PageModel.Content, _selectionStart, _selectionEnd);
+                        break;
+                    case ToolbarButton.Header1:
+                        toggleResult = _editorManager
+                                .ToggleHeader(1, PageModel.Content, _selectionStart);
+                        break;
+                    case ToolbarButton.Header2:
+                        toggleResult = _editorManager
+                                .ToggleHeader(2, PageModel.Content, _selectionStart);
+                        break;
+                    case ToolbarButton.Header3:
+                        toggleResult = _editorManager
+                                .ToggleHeader(3, PageModel.Content, _selectionStart);
+                        break;
+                    case ToolbarButton.InlineCode:
+                        toggleResult = _editorManager
+                            .ToggleMarker(TextMarkers.InlineCode, PageModel.Content, _selectionStart, _selectionEnd);
+                        break;
+                    case ToolbarButton.CodeBlock:
+                        toggleResult = _editorManager
+                            .ToggleMarker(TextMarkers.CodeBlock, PageModel.Content, _selectionStart, _selectionEnd);
+                        break;
+                }
+                PageModel.Content = toggleResult.Content;
+                StateHasChanged();
+                await ResetCursor(toggleResult.Offset);
+                await CheckFormattingPosition();
             }
-            PageModel.Content = toggleResult.Content;
-            StateHasChanged();
-            await ResetCursor(toggleResult.Offset);
-            await CheckFormattingPosition();
+            catch
+            {
+                // ignore;
+            }
         }
 
 

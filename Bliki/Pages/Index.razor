@@ -10,7 +10,7 @@
     <AuthorizeView>
         <Authorized>
             <div style="position: absolute; right: 6px; display: flex">
-                <a class="nav-link" href="@($"editor/{PageLink ?? "home"}")">
+                <a class="nav-link" @onclick="OpenEditor">
                     <span class="oi oi-pencil" aria-hidden="true"></span> Edit Page
                 </a>
                 <a class="nav-link" href="editor/new">

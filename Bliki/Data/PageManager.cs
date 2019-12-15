@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
@@ -13,6 +14,8 @@ namespace Bliki.Data
     public class PageManager
     {
         private readonly IGitManager _gitManager;
+        private static List<EditingSession> _editingSessions 
+            = new List<EditingSession>();
 
         public PageManager(IGitManager gitManager)
         {
@@ -48,6 +51,11 @@ namespace Bliki.Data
                 {
                     await _gitManager.Commit(model.PageLink, userName);
                 });
+                if (_editingSessions.FirstOrDefault(s => s.PageModel == model) is EditingSession session)
+                {
+                    _editingSessions.Remove(session);
+                }
+
                 return true;
             }
             catch(Exception ex)
@@ -72,6 +80,23 @@ namespace Bliki.Data
             return result;
         }
 
+        internal void LockForEditing(WikiPageModel pageModel, string username)
+        {
+            _editingSessions.Add(new EditingSession(pageModel, username));
+        }
+
+        internal void Cancel(WikiPageModel model)
+        {
+            if (_editingSessions.FirstOrDefault(s => s.PageModel == model) is EditingSession session)
+            {
+                _editingSessions.Remove(session);
+            }
+        }
+
+        internal bool CanEdit(WikiPageModel pageModel)
+        {
+            return !_editingSessions.Any(s => s.PageModel.Equals(pageModel));
+        }
 
         public IList<NavPageMeta> GetCurrentPageHeaders(string pageLink)
         {
@@ -110,6 +135,11 @@ namespace Bliki.Data
             }
 
             return new WikiPageModel { Content = "# New Page", PageLink = pageLink, Title = "New Page" };
+        }
+
+        public static void ClearAbandonedEditingSessions()
+        {
+            _editingSessions.RemoveAll(s => s.CheckedOutTime < DateTime.Now.AddMinutes(-10));
         }
 
 
