@@ -1,5 +1,7 @@
-﻿using Bliki.Data;
+﻿using Bliki.Components;
+using Bliki.Data;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
 using System;
 using System.Threading.Tasks;
@@ -19,8 +21,11 @@ namespace Bliki.Pages
         protected NavigationManager _navManager { get; set; } = default!;
         [Inject]
         protected IJSRuntime _jsRuntime { get; set; } = default!;
-
-        protected WikiPageModel PageModel { get; set; } = new WikiPageModel();
+        [Inject]
+        private IHttpContextAccessor _httpContextAccessor { get; set; } = default!;
+        [Inject]
+        private ModalService Modal { get; set; } = default!;
+        private WikiPageModel PageModel { get; set; } = new WikiPageModel();
 
 
         protected override void OnParametersSet()
@@ -61,9 +66,26 @@ namespace Bliki.Pages
             }
         }
 
-        protected void SectionNavigationHandler(string elementId)
+        private void OpenEditor()
         {
-            StateHasChanged();
+            if (_pageManager.CanEdit(PageModel))
+            {
+                if (_httpContextAccessor.HttpContext.User.Identity.Name is string username)
+                {
+                    _pageManager.LockForEditing(PageModel, username);
+                    _navManager.NavigateTo($"editor/{PageLink ?? "home"}");
+                }
+                else
+                {
+                    Modal.Show("Can't Edit", "User Session is Invalid! Please log in again.");
+                }
+            }
+            else
+            {
+                Modal.Show("Can't Edit", 
+                    @"Sorry, that page is currently being edited by another user.
+Please try again later.");
+            }
         }
 
         private async Task ScrollToElementId(string elementId)

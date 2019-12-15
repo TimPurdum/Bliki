@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Bliki.Areas.Identity;
 using Bliki.Data;
 using Bliki.Interfaces;
+using Bliki.Components;
 
 namespace Bliki
 {
@@ -31,6 +32,7 @@ namespace Bliki
             services.AddScoped<PageManager>();
             services.AddScoped(typeof(IGitManager), typeof(GitManager));
             services.AddScoped<MarkdownEditorManager>();
+            services.AddScoped<ModalService>();
             services.AddHttpContextAccessor();
         }
 

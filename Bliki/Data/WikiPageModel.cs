@@ -20,7 +20,6 @@
         public bool Equals(WikiPageModel other)
         {
             return other.Title == Title &&
-                other.Content == Content &&
                 other.PageLink == PageLink;
         }
     }

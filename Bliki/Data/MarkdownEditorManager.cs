@@ -87,9 +87,9 @@ namespace Bliki.Data
 
             if (markersFound == 0)
             {
-                offset = marker.Value.Length;
-                content = content.Insert(end, marker.Value);
-                content = content.Insert(start, marker.Value);
+                offset = marker.Value.Length + (marker.IsBlock ? 1 : 0);
+                content = content.Insert(end, marker.Value + (marker.IsBlock ? Environment.NewLine : ""));
+                content = content.Insert(start, (marker.IsBlock ? Environment.NewLine : "") + marker.Value);
             }
 
             return new ToggleResult(content, offset);
