@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Bliki.Pages
 {
-    public class EditorBase : ComponentBase
+    public partial class Editor
     {
         [Parameter]
         public string PageLink { get; set; } = "home";
@@ -257,10 +257,10 @@ namespace Bliki.Pages
             await _jsRuntime.InvokeVoidAsync("focusOnElement", new object[] { "editor-text-area", _selectionStart, _selectionEnd });
         }
 
-        protected int _selectionStart;
-        protected int _selectionEnd;
-        protected string _beforePosition = "";
-        protected string _afterPosition = "";
+        private int _selectionStart;
+        private int _selectionEnd;
+        private string _beforePosition = "";
+        private string _afterPosition = "";
         private string[] _allLines = new string[0];
         private readonly Regex _boldRegex = new Regex(@"(?:^|[^\*])(\*\*)(?:[^\*]|$)");
         private readonly Regex _italicRegex = new Regex(@"(?:^|[^\*])(\*)(?:[^\*]|$)");

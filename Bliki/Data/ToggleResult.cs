@@ -5,7 +5,7 @@
         public ToggleResult(string content, int offset)
         {
             Content = content;
-            Offset = Offset;
+            Offset = offset;
         }
 
         public string Content { get; set; }

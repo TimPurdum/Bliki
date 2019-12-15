@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Bliki.Pages
 {
-    public class IndexBase : ComponentBase
+    public partial class Index
     {
         [Parameter]
         public string? PageLink { get; set; }
