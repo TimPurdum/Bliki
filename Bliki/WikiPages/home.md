@@ -11,3 +11,7 @@ To use automatic git commits on page updates, set the following value in *appset
 "CommitToGit": true
 ```
 Set up your Publish (if using compiled) or Source folder as a git repository.
+```
+C:\git\Bliki> git init
+```
+

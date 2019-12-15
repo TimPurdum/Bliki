@@ -106,7 +106,8 @@ namespace Bliki.Data
                 index += line.Length + 1;
                 if (index >= start)
                 {
-                    return new Tuple<string, int>(line, lineIndex);
+                    return new Tuple<string, int>(line, lineIndex
+                        );
                 }
             }
             return new Tuple<string, int>("", 0);
