@@ -17,6 +17,7 @@ namespace Bliki.Components
 			}
 
 			var content = new RenderFragment(x => { x.OpenComponent(1, contentType); x.CloseComponent(); });
+			
 			OnShow?.Invoke(title, content);
 		}
 

@@ -30,6 +30,10 @@ namespace Bliki.Pages
         public bool InlineCode { get; set; }
         [Parameter]
         public bool CodeBlock { get; set; }
+        [Parameter]
+        public bool NumberedList { get; set; }
+        [Parameter]
+        public bool BulletList { get; set; }
         [Inject]
         private PageManager _pageManager { get; set; } = default!;
         [Inject]
@@ -40,6 +44,8 @@ namespace Bliki.Pages
         private IJSRuntime _jsRuntime { get; set; } = default!;
         [Inject]
         private MarkdownEditorManager _editorManager { get; set; } = default!;
+        [Inject]
+        private ModalService Modal { get; set; } = default!;
 
         protected WikiPageModel PageModel { get; set; } = new WikiPageModel();
             
@@ -108,6 +114,7 @@ namespace Bliki.Pages
 
         protected void Delete()
         {
+            // Modal.Show("Delete", new ConfirmDeleteForm() { PageLink = PageLink });
             if (PageModel.PageLink != "new-page")
             {
                 _pageManager.DeletePage(PageLink, _httpContextAccessor.HttpContext.User.Identity.Name);
@@ -129,6 +136,18 @@ namespace Bliki.Pages
                         break;
                     case "s":
                         Save();
+                        break;
+                    case "Enter":
+                        await CheckFormattingPosition();
+                        if (NumberedList)
+                        {
+                            await ApplyStyling(ToolbarButton.NumberedList);
+                        }
+                        else if (BulletList)
+                        {
+                            await ApplyStyling(ToolbarButton.BulletList);
+                        }
+
                         break;
                 }
             }
@@ -222,6 +241,14 @@ namespace Bliki.Pages
                     case ToolbarButton.CodeBlock:
                         toggleResult = _editorManager
                             .ToggleMarker(TextMarkers.CodeBlock, PageModel.Content, _selectionStart, _selectionEnd);
+                        break;
+                    case ToolbarButton.NumberedList:
+                        toggleResult = _editorManager
+                            .ToggleNumberedList(PageModel.Content, _selectionStart);
+                        break;
+                    case ToolbarButton.BulletList:
+                        toggleResult = _editorManager
+                            .ToggleBulletList(PageModel.Content, _selectionStart);
                         break;
                 }
                 PageModel.Content = toggleResult.Content;
