@@ -24,3 +24,4 @@ C:\git\Bliki> git push
 The editor uses standard Markdown, and is designed to handle simple keyboard shortcuts.
 - `ctrl-b`: **Bold**
 - `ctrl-i`: *Italic*
+in addition to the standard toolbar.
