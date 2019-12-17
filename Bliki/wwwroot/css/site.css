@@ -104,6 +104,7 @@ pre {
      border-radius: 3px;
      align-content: center;
      position: relative;
+     min-width: 30px;
 }
 
 .toolbar-btn .tooltip {
@@ -133,6 +134,13 @@ pre {
     border-radius: 3px;
     background: lightblue;
     color: lightgoldenrodyellow !important;
+}
+
+.numbered-list-row {
+    font-size: 6px;
+    font-weight: 900;
+    position: absolute;
+    left: 4px;
 }
 
 .main .top-row {

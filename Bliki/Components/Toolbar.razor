@@ -39,6 +39,18 @@
         <span class="oi oi-code"></span>
         <span class="tooltip">Code Block</span>
     </a>
+    <a class="btn btn-sm toolbar-btn@(BulletList ? "-selected": "")"
+       @onclick="() => Click(ToolbarButton.BulletList)">
+        <span class="oi oi-list"></span>
+        <span class="tooltip">Bullet List</span>
+    </a>
+    <a class="btn btn-sm toolbar-btn@(NumberedList ? "-selected": "")"
+       @onclick="() => Click(ToolbarButton.NumberedList)">
+        <span class="numbered-list-row" style="top: 2px;">1 ____</span>
+        <span class="numbered-list-row" style="top: 8px;">2 ____</span>
+        <span class="numbered-list-row" style="top: 14px;">3 ____</span>
+        <span class="tooltip">Numbered List</span>
+    </a>
 </div>
 
 @code {
@@ -60,6 +72,10 @@
     public bool Header2 { get; set; }
     [Parameter]
     public bool Header3 { get; set; }
+    [Parameter]
+    public bool NumberedList { get; set; }
+    [Parameter]
+    public bool BulletList { get; set; }
     [Parameter]
     public EventCallback<ToolbarButton> ButtonClick { get; set; }
 

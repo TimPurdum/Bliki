@@ -46,6 +46,12 @@ namespace Bliki.Data
             var before = start > 0 ? content.Substring(0, start) : "";
             var after = end < content.Length ? content.Substring(end, content.Length - end) : "";
             var selected = start >= 0 && end <= content.Length ? content.Substring(start, end - start) : content;
+            if (!marker.IsBlock)
+            {
+                var lineTuple = GetLineAndIndex(content, start);
+                before = before.Substring(lineTuple.Item2);
+                after = after.Substring(0, (lineTuple.Item2 + lineTuple.Item1.Length) - start);
+            }
 
             var regex = new Regex($@"(?:^|[^\*])({marker.RegexValue})(?:[^\*]|$)");
             var markersFound = 0;
@@ -67,7 +73,7 @@ namespace Bliki.Data
             if (regex.Matches(before).Count % 2 == 1)
             {
                 markersFound++;
-                var lastBeforePosition = before.LastIndexOf(marker.Value);
+                var lastBeforePosition = content.Substring(0, start).LastIndexOf(marker.Value);
                 content = content.Remove(lastBeforePosition, 2);
             }
 
@@ -106,8 +112,7 @@ namespace Bliki.Data
                 index += line.Length + 1;
                 if (index >= start)
                 {
-                    return new Tuple<string, int>(line, lineIndex
-                        );
+                    return new Tuple<string, int>(line, lineIndex);
                 }
             }
             return new Tuple<string, int>("", 0);
@@ -115,5 +120,75 @@ namespace Bliki.Data
 
 
         private readonly Regex _lineBreakRegex = new Regex("\r\n|\r|\n");
+
+
+        public ToggleResult ToggleNumberedList(string content, int start)
+        {
+            var (line, lineIndex) = GetLineAndIndex(content, start);
+            var originalIndent = 0;
+
+            while (line.StartsWith(" "))
+            {
+                line = line.Remove(0, 1);
+                originalIndent++;
+            }
+            
+            var intRgx = new Regex(@"^([\d]+\. )");
+            var match = intRgx.Match(line);
+            var offset = 0;
+            if (match.Success)
+            {
+                // This was a numbered line, remove the number
+                content = content.Remove(lineIndex + originalIndent, match.Length);
+                offset = -1 * match.Length;
+            }
+            else
+            {
+                // add a number
+                var previousLineTuple = GetLineAndIndex(content, lineIndex - 1);
+                var previousLine = previousLineTuple.Item1.Trim();
+                var prevLineMatch = intRgx.Match(previousLine);
+                var newNum = 1;
+                if (prevLineMatch.Success)
+                {
+                    newNum = int.Parse(prevLineMatch.Value.TrimEnd().TrimEnd('.')) + 1;
+                }
+
+                var insert = $"{newNum}. ";
+                content = content.Insert(lineIndex + originalIndent, insert);
+                offset = insert.Length;
+            }
+            
+            return new ToggleResult(content, offset);
+        }
+
+
+        public ToggleResult ToggleBulletList(string content, int start)
+        {
+            var (line, lineIndex) = GetLineAndIndex(content, start);
+            var originalIndent = 0;
+
+            while (line.StartsWith(" "))
+            {
+                line = line.Remove(0, 1);
+                originalIndent++;
+            }
+            
+            var offset = 0;
+            if (line.StartsWith("- "))
+            {
+                // This was a bulleted line, remove the number
+                content = content.Remove(lineIndex + originalIndent, 2);
+                offset = -2;
+            }
+            else
+            {
+                // add a bullet
+                content = content.Insert(lineIndex + originalIndent, "- ");
+                offset = 2;
+            }
+            
+            return new ToggleResult(content, offset);
+        }
     }
 }

@@ -9,6 +9,8 @@
         Header2,
         Header3,
         InlineCode,
-        CodeBlock
+        CodeBlock,
+        NumberedList,
+        BulletList
     }
 }
