@@ -23,4 +23,10 @@ C:\git\Bliki> git push
 The editor uses standard Markdown, and is designed to handle simple keyboard shortcuts.
 - `ctrl-b`: **Bold**
 - `ctrl-i`: *Italic*
-in addition to the standard toolbar.
+    in addition to the standard toolbar.
+
+Of course, you can also add your own markdown marks, such as `*`italic`*`, `**`bold`**`, or `##` headers.
+The markdown renderer is courtesy of [Markdig](https://github.com/lunet-io/markdig), an open-source .NET markdown renderer.
+1. Both numbered lists *and*
+ - bulleted, and 
+    - nested lists, are all supported. 
