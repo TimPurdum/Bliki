@@ -28,5 +28,5 @@ The editor uses standard Markdown, and is designed to handle simple keyboard sho
 Of course, you can also add your own markdown marks, such as `*`italic`*`, `**`bold`**`, or `##` headers.
 The markdown renderer is courtesy of [Markdig](https://github.com/lunet-io/markdig), an open-source .NET markdown renderer.
 1. Both numbered lists *and*
- - bulleted, and 
-    - nested lists, are all supported. 
+- bulleted, and 
+    - nested lists, are all supported.
