@@ -13,11 +13,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Data\Migrations\20191117015725_Initial.cs" />
-    <Compile Remove="Data\Migrations\20191117015725_Initial.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Remove="UserStore.json" />
   </ItemGroup>
 
