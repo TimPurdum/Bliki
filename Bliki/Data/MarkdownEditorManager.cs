@@ -110,7 +110,7 @@ namespace Bliki.Data
             {
                 var lineIndex = index;
                 index += line.Length + 1;
-                if (index >= start)
+                if (index > start)
                 {
                     return new Tuple<string, int>(line, lineIndex);
                 }
@@ -162,6 +162,16 @@ namespace Bliki.Data
             return new ToggleResult(content, offset);
         }
 
+        public ToggleResult InsertTab(string content, int start, int end)
+        {
+            var before = start > 0 ? content.Substring(0, start) : "";
+            var after = end < content.Length ? content.Substring(end, content.Length - end) : "";
+            var selected = start >= 0 && end <= content.Length ? content.Substring(start, end - start) : content;
+            content = content.Remove(start, selected.Length);
+            content = content.Insert(start, "\t");
+
+            return new ToggleResult(content, 1 - selected.Length);
+        }
 
         public ToggleResult ToggleBulletList(string content, int start)
         {

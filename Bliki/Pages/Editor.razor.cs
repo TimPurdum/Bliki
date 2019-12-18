@@ -124,37 +124,51 @@ namespace Bliki.Pages
 
         protected async void OnKeyDown(KeyboardEventArgs e)
         {
-            if (e.CtrlKey)
+            switch (e.Key)
             {
-                switch (e.Key)
-                {
-                    case "b":
+                case "b":
+                    if (e.CtrlKey)
+                    {
                         await ApplyStyling(ToolbarButton.Bold);
-                        break;
-                    case "i":
+                    }
+                    break;
+                case "i":
+                    if (e.CtrlKey)
+                    {
                         await ApplyStyling(ToolbarButton.Italic);
-                        break;
-                    case "s":
+                    }
+                    break;
+                case "s":
+                    if (e.CtrlKey)
+                    {
                         Save();
-                        break;
-                    case "Enter":
-                        await CheckFormattingPosition();
-                        if (NumberedList)
-                        {
-                            await ApplyStyling(ToolbarButton.NumberedList);
-                        }
-                        else if (BulletList)
-                        {
-                            await ApplyStyling(ToolbarButton.BulletList);
-                        }
-
-                        break;
-                }
-            }
-            else if (e.Key.Contains("Arrow") || e.Key == "Enter")
-            {
-                await CheckFormattingPosition();
-                StateHasChanged();
+                    }
+                    break;
+                case "ArrowUp":
+                case "ArrowLeft":
+                case "ArrowRight":
+                case "ArrowDown":
+                    await CheckFormattingPosition();
+                    StateHasChanged();
+                    break;
+                case "Enter":
+                    await CheckFormattingPosition();
+                    if (LineIsNumbered(-1))
+                    {
+                        await ApplyStyling(ToolbarButton.NumberedList);
+                    }
+                    else if (LineIsBulleted(-1))
+                    {
+                        await ApplyStyling(ToolbarButton.BulletList);
+                    }
+                    else
+                    {
+                        StateHasChanged();
+                    }
+                    break;
+                case "Tab":
+                    await InsertTab();
+                    break;
             }
         }
 
@@ -194,6 +208,8 @@ namespace Bliki.Pages
                 Header1 = headerLevel == 1;
                 Header2 = headerLevel == 2;
                 Header3 = headerLevel == 3;
+                NumberedList = LineIsNumbered();
+                BulletList = LineIsBulleted();
             }
             catch
             {
@@ -263,6 +279,15 @@ namespace Bliki.Pages
         }
 
 
+        private async Task InsertTab()
+        {
+            await CheckFormattingPosition();
+            var toggleResult = _editorManager.InsertTab(PageModel.Content, _selectionStart, _selectionEnd);
+            PageModel.Content = toggleResult.Content;
+            StateHasChanged();
+            await ResetCursor(toggleResult.Offset);
+            await CheckFormattingPosition();
+        }
 
 
         private int GetLineHeaderLevel()
@@ -279,16 +304,32 @@ namespace Bliki.Pages
         }
 
 
-        private string GetLine()
+        private bool LineIsNumbered(int relativeToCursor = 0)
+        {
+            var line = GetLine(relativeToCursor);
+            return _numberedLineRegex.IsMatch(line);
+        }
+
+        private bool LineIsBulleted(int relativeToCursor = 0)
+        {
+            var line = GetLine(relativeToCursor);
+            return _bulletLineRegex.IsMatch(line);
+        }
+
+
+        private string GetLine(int relativeToCursor = 0)
         {
             _allLines = _lineBreakRegex.Split(PageModel.Content);
             var index = 0;
-            foreach (var line in _allLines)
+            for (int i = 0; i < _allLines.Length; i++)
             {
-                index += line.Length;
-                if (index >= _selectionStart)
+                string line = _allLines[i];
+                index += line.Length + 1;
+                if (index > _selectionStart)
                 {
-                    return line;
+                    var returnIndex = (i + relativeToCursor) >= 0 && (i + relativeToCursor) < _allLines.Length - 1 ?
+                        i + relativeToCursor : i;
+                    return _allLines[returnIndex];
                 }
             }
             return "";
@@ -314,5 +355,7 @@ namespace Bliki.Pages
         private readonly Regex _italicRegex = new Regex(@"(?:^|[^\*])(\*)(?:[^\*]|$)");
         private readonly Regex _strikethroughRegex = new Regex(@"(?:^|[^~])(~~)(?:[^~]|$)");
         private readonly Regex _lineBreakRegex = new Regex("\r\n|\r|\n");
+        private readonly Regex _numberedLineRegex = new Regex(@"^[\s]*[\d]+\. ");
+        private readonly Regex _bulletLineRegex = new Regex(@"^[\s]*- ");
     }
 }
