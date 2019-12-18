@@ -136,12 +136,6 @@ pre {
     color: lightgoldenrodyellow !important;
 }
 
-.numbered-list-row {
-    font-size: 6px;
-    font-weight: 900;
-    position: absolute;
-    left: 4px;
-}
 
 .main .top-row {
     background-color: #f7f7f7;
