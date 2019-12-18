@@ -164,13 +164,11 @@ namespace Bliki.Data
 
         public ToggleResult InsertTab(string content, int start, int end)
         {
-            var before = start > 0 ? content.Substring(0, start) : "";
-            var after = end < content.Length ? content.Substring(end, content.Length - end) : "";
             var selected = start >= 0 && end <= content.Length ? content.Substring(start, end - start) : content;
             content = content.Remove(start, selected.Length);
-            content = content.Insert(start, "\t");
+            content = content.Insert(start, "    ");
 
-            return new ToggleResult(content, 1 - selected.Length);
+            return new ToggleResult(content, 4 - selected.Length);
         }
 
         public ToggleResult ToggleBulletList(string content, int start)
