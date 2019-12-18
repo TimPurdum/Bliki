@@ -19,9 +19,10 @@ namespace Bliki.Test
             var testPageModel = new WikiPageModel
             {
                 Content = "This is test content",
-                Title = "Test Page 1"
+                Title = "Test Page 1",
+                SubTitle = "SubTitle Page 1"
             };
-            var savePath = @"..\..\..\WikiPages\test-page-1";
+            var savePath = @"..\..\..\WikiPages\test-page-1.md";
 
             // Act
             var result = manager.SavePage(testPageModel, "test");
@@ -30,8 +31,9 @@ namespace Bliki.Test
             Assert.IsTrue(result);
             Assert.AreEqual("test-page-1", testPageModel.PageLink);
             Assert.IsTrue(File.Exists(savePath));
-            Assert.AreEqual(
-                "{\"Title\":\"Test Page 1\",\"PageLink\":\"test-page-1\",\"Content\":\"This is test content\"}", 
+            Assert.AreEqual($@"<!-- TITLE: Test Page 1 -->
+<!-- SUBTITLE: SubTitle Page 1 -->
+This is test content", 
                 File.ReadAllText(savePath));
             
             // Cleanup
@@ -46,8 +48,10 @@ namespace Bliki.Test
             var gitMock = new Mock<IGitManager>();
             var manager = new PageManager(gitMock.Object, @"..\..\..\WikiPages");
 
-            var savePath = @"..\..\..\WikiPages\test-page-2";
-            var content = "{\"Title\":\"Test Page 2\",\"PageLink\":\"test-page-2\",\"Content\":\"This is load test content\"}";
+            var savePath = @"..\..\..\WikiPages\test-page-2.md";
+            var content = $@"<!-- TITLE: Test Page 2 -->
+<!-- SUBTITLE: SubTitle Page 2 -->
+This is load test content";
             File.WriteAllText(savePath, content);
 
             // Act
@@ -56,6 +60,7 @@ namespace Bliki.Test
             // Assert
             Assert.IsNotNull(pageModel);
             Assert.AreEqual("Test Page 2", pageModel.Title);
+            Assert.AreEqual("SubTitle Page 2", pageModel.SubTitle);
             Assert.AreEqual("This is load test content", pageModel.Content);
             Assert.AreEqual("test-page-2", pageModel.PageLink);
 
