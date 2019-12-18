@@ -1,6 +1,5 @@
 .vs
 *\bin
 *\obj
-/.idea/.idea.Bliki/.idea
+*\.idea
 UserStore.json
-/.idea/.idea.Bliki/riderModule.iml
