@@ -7,100 +7,141 @@ namespace Bliki.Test
     public class EditorTests
     {
         [TestMethod]
-        public void AddBoldToSelection()
+        public void AddInlineMarkersToSelection()
         {
             // Arrange
             var editManager = new MarkdownEditorManager();
 
-            // Act
-            var result = editManager.ToggleMarker(TextMarkers.Bold, "Hello with some bold text!", 16, 20);
+            foreach (var marker in _inlineMarkers)
+            {
+                // Act
+                var result = editManager.ToggleMarker(marker, "Hello with some bold text!", 16, 20);
 
-            // Assert
-            Assert.AreEqual("Hello with some **bold** text!", result.Content);
+                // Assert
+                Assert.AreEqual($"Hello with some {marker.Value}bold{marker.Value} text!", result.Content);
+            }
         }
 
         [TestMethod]
-        public void AddBoldFailsIfAlreadySet()
+        public void AddInlineMarkerFailsIfAlreadySet()
         {
             // Arrange
             var editManager = new MarkdownEditorManager();
 
-            // Act
-            var result = editManager.ToggleMarker(TextMarkers.Bold, "**Hello with some bold text!**", 18, 22);
+            foreach (var marker in _inlineMarkers)
+            {
+                // Act
+                var result = editManager.ToggleMarker(marker, $"{marker.Value}Hello with some bold text!{marker.Value}", 18, 22);
 
-            // Assert
-            Assert.AreNotEqual("**Hello with some **bold** text!**", result.Content);
-            Assert.AreEqual("Hello with some bold text!", result.Content);
-        }
-
-
-        [TestMethod]
-        public void RemoveBoldFromSelection()
-        {
-            // Arrange
-            var editManager = new MarkdownEditorManager();
-
-            // Act
-            var result = editManager.ToggleMarker(TextMarkers.Bold, "Hello with some **bold** text!", 18, 22);
-
-            // Assert
-            Assert.AreEqual("Hello with some bold text!", result.Content);
+                // Assert
+                Assert.AreNotEqual($"{marker.Value}Hello with some {marker.Value}bold{marker.Value} text!{marker.Value}", result.Content);
+                Assert.AreEqual("Hello with some bold text!", result.Content);
+            }
         }
 
 
         [TestMethod]
-        public void RemoveBoldFromRegionLargerThanSelection()
+        public void RemoveInlineMarkerFromSelection()
         {
             // Arrange
             var editManager = new MarkdownEditorManager();
 
-            // Act
-            var result = editManager.ToggleMarker(TextMarkers.Bold, "**Hello with some bold text!**", 18, 18);
+            foreach (var marker in _inlineMarkers)
+            {
+                var offset = marker.Value.Length;
 
-            // Assert
-            Assert.AreEqual("Hello with some bold text!", result.Content);
+                // Act
+                var result = editManager
+                    .ToggleMarker(marker, 
+                    $"Hello with some {marker.Value}bold{marker.Value} text!", 16 + offset, 20 + offset);
+
+                // Assert
+                Assert.AreEqual("Hello with some bold text!", result.Content);
+            }
         }
 
 
         [TestMethod]
-        public void RemoveBoldWithinSelection()
+        public void RemoveInlineMarkerFromRegionLargerThanSelection()
         {
             // Arrange
             var editManager = new MarkdownEditorManager();
 
-            // Act
-            var result = editManager.ToggleMarker(TextMarkers.Bold, "Hello with some **bold** text!", 0, 30);
+            foreach (var marker in _inlineMarkers)
+            {
+                var offset = marker.Value.Length;
 
-            // Assert
-            Assert.AreEqual("Hello with some bold text!", result.Content);
+                // Act
+                var result = editManager
+                    .ToggleMarker(marker, 
+                    $"{marker.Value}Hello with some bold text!{marker.Value}", 16 + offset , 16 + offset);
+
+                // Assert
+                Assert.AreEqual("Hello with some bold text!", result.Content);
+            }
         }
 
 
         [TestMethod]
-        public void RemoveOddBoldMarkers()
+        public void RemoveInlineMarkerWithinSelection()
         {
             // Arrange
             var editManager = new MarkdownEditorManager();
 
-            // Act
-            var result = editManager.ToggleMarker(TextMarkers.Bold, "Hello with some **bold text!", 0, 30);
+            foreach (var marker in _inlineMarkers)
+            {
+                var offset = marker.Value.Length;
 
-            // Assert
-            Assert.AreEqual("Hello with some bold text!", result.Content);
+                // Act
+                var result = editManager
+                    .ToggleMarker(marker, 
+                    $"Hello with some {marker.Value}bold{marker.Value} text!", 0, 26 + (offset * 2));
+
+                // Assert
+                Assert.AreEqual("Hello with some bold text!", result.Content);
+            }
         }
 
 
         [TestMethod]
-        public void ToggleDoesNotAffectPreviousBoldSections()
+        public void RemoveOddInlineMarkers()
         {
             // Arrange
             var editManager = new MarkdownEditorManager();
 
-            // Act
-            var result = editManager.ToggleMarker(TextMarkers.Bold, "**Hello** with some bold text!", 20, 24);
+            foreach (var marker in _inlineMarkers)
+            {
+                var offset = marker.Value.Length;
 
-            // Assert
-            Assert.AreEqual("**Hello** with some **bold** text!", result.Content);
+                // Act
+                var result = editManager
+                    .ToggleMarker(marker, 
+                    $"Hello with some {marker.Value}bold text!", 0, 26 + offset);
+
+                // Assert
+                Assert.AreEqual("Hello with some bold text!", result.Content);
+            }
+        }
+
+
+        [TestMethod]
+        public void ToggleDoesNotAffectPreviousMarkedSections()
+        {
+            // Arrange
+            var editManager = new MarkdownEditorManager();
+
+            foreach (var marker in _inlineMarkers)
+            {
+                var offset = marker.Value.Length;
+
+                // Act
+                var result = editManager
+                    .ToggleMarker(marker, 
+                    $"{marker.Value}Hello{marker.Value} with some bold text!", 16 + (offset * 2), 20 + (offset * 2));
+
+                // Assert
+                Assert.AreEqual($"{marker.Value}Hello{marker.Value} with some {marker.Value}bold{marker.Value} text!", result.Content);
+            }
         }
 
 
@@ -110,12 +151,24 @@ namespace Bliki.Test
             // Arrange
             var editManager = new MarkdownEditorManager();
 
-            // Act
-            var result = editManager.ToggleMarker(TextMarkers.Bold, "**Hello with some bold text!**", 28, 28);
+            foreach (var marker in _inlineMarkers)
+            {
+                var offset = marker.Value.Length;
 
-            // Assert
-            Assert.AreEqual("**Hello with some bold text!**", result.Content);
-            Assert.AreEqual(2, result.Offset);
+                // Act
+                var result = editManager
+                    .ToggleMarker(marker, 
+                    $"{marker.Value}Hello with some bold text!{marker.Value}", 26 + offset, 26 + offset);
+
+                // Assert
+                Assert.AreEqual($"{marker.Value}Hello with some bold text!{marker.Value}", result.Content);
+                Assert.AreEqual(offset, result.Offset);
+            }
         }
+
+        private TextMarker[] _inlineMarkers =
+        {
+            TextMarkers.Bold, TextMarkers.Italic, TextMarkers.Strikethrough, TextMarkers.InlineCode
+        };
     }
 }

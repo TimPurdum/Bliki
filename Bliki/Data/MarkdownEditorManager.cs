@@ -50,10 +50,13 @@ namespace Bliki.Data
             {
                 var lineTuple = GetLineAndIndex(content, start);
                 before = before.Substring(lineTuple.Item2);
-                after = after.Substring(0, (lineTuple.Item2 + lineTuple.Item1.Length) - start);
+                after = end > lineTuple.Item2 + lineTuple.Item1.Length ?
+                    content.Substring(end, lineTuple.Item1.Length - (end - lineTuple.Item2)) :
+                    after;
             }
 
-            var regex = new Regex($@"(?:^|[^\*])({marker.RegexValue})(?:[^\*]|$)");
+            var regex = new Regex(marker.RegexValue, RegexOptions.Multiline);
+            regex.Matches(before);
             var markersFound = 0;
             var offset = -1 * marker.Value.Length;
             // check outside
@@ -62,19 +65,19 @@ namespace Bliki.Data
                 markersFound++;
                 // Special case: if the cursor is right before the final mark, jump outside.
                 if (start == end && after.IndexOf(marker.Value) == 0 &&
-                    before.LastIndexOf(marker.Value) < start - 2)
+                    before.LastIndexOf(marker.Value) < start - marker.Value.Length)
                 {
                     return new ToggleResult(content, marker.Value.Length);
                 }
 
                 var firstAfterPosition = after.IndexOf(marker.Value) + end;
-                content = content.Remove(firstAfterPosition, 2);
+                content = content.Remove(firstAfterPosition, marker.Value.Length);
             }
             if (regex.Matches(before).Count % 2 == 1)
             {
                 markersFound++;
                 var lastBeforePosition = content.Substring(0, start).LastIndexOf(marker.Value);
-                content = content.Remove(lastBeforePosition, 2);
+                content = content.Remove(lastBeforePosition, marker.Value.Length);
             }
 
             // check inside
@@ -84,10 +87,10 @@ namespace Bliki.Data
                 markersFound++;
                 var firstInsidePosition = selected.IndexOf(marker.Value) + start;
                 var lastInsidePosition = selected.LastIndexOf(marker.Value) + start;
-                content = content.Remove(lastInsidePosition, 2);
+                content = content.Remove(lastInsidePosition, marker.Value.Length);
                 if (lastInsidePosition != firstInsidePosition)
                 {
-                    content = content.Remove(firstInsidePosition, 2);
+                    content = content.Remove(firstInsidePosition, marker.Value.Length);
                 }
             }
 
