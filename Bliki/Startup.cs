@@ -9,6 +9,7 @@ using Bliki.Areas.Identity;
 using Bliki.Data;
 using Bliki.Interfaces;
 using Bliki.Components;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace Bliki
 {
@@ -39,6 +40,11 @@ namespace Bliki
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
