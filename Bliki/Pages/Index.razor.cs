@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Bliki.Pages
@@ -14,6 +16,9 @@ namespace Bliki.Pages
         public string? PageLink { get; set; }
         [Parameter]
         public string? SectionLink { get; set; }
+        [Parameter]
+        public string SearchTerm { get; set; } = "";
+        protected List<NavPageMeta> SearchResults => _pageManager.SearchForPages(SearchTerm.ToLowerInvariant());
             
         [Inject]
         private PageManager _pageManager { get; set; } = default!;
@@ -28,35 +33,36 @@ namespace Bliki.Pages
         private WikiPageModel PageModel { get; set; } = new WikiPageModel();
 
 
+
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            if (PageLink == null) _navManager.NavigateTo("home", true);
             PageModel = _pageManager.LoadPage(string.IsNullOrEmpty(PageLink) ? "home" : PageLink);
         }
 
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        protected override void OnAfterRender(bool firstRender)
         {
-            await base.OnAfterRenderAsync(firstRender);
             try
             {
+                var fragment = new Uri(_navManager.Uri).Fragment;
+                if (fragment.StartsWith("#"))
+                {
+                    _navManager.NavigateTo($"{_previousPageLink}/{fragment.Replace("#", "")}");
+                    return;
+                }
                 if (string.IsNullOrEmpty(PageLink))
                 {
-                    _navManager.NavigateTo("/home", true);
+                    _navManager.NavigateTo(string.IsNullOrEmpty(_previousPageLink) ? "/home" : _previousPageLink, true);
+                    return;
                 }
-                var model = _pageManager.LoadPage(PageLink ?? "home");
 
-                if (!PageModel.Equals(model))
-                {
-                    PageModel = model;
-                    StateHasChanged();
-                }
+                _previousPageLink = PageLink;
 
                 if (SectionLink != _previousSectionLink &&
                         !string.IsNullOrEmpty(SectionLink))
                 {
-                    await ScrollToElementId(SectionLink);
+                    ScrollToElementId(SectionLink);
                     _previousSectionLink = SectionLink;
                 }
             }
@@ -88,13 +94,22 @@ Please try again later.");
             }
         }
 
-        private async Task ScrollToElementId(string elementId)
+        private void ScrollToElementId(string elementId)
         {
-            await _jsRuntime
+            Task.Run(async () =>
+            {
+                await _jsRuntime
                 .InvokeVoidAsync("scrollToElementId", new[] { elementId });
+            });
         }
 
 
         private string _previousSectionLink = "";
+        private string _previousPageLink = "";
+
+        private void ClearSearch()
+        {
+            SearchTerm = "";
+        }
     }
 }

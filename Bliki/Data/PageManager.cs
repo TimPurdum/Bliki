@@ -23,6 +23,23 @@ namespace Bliki.Data
             FindWikiPageDirectory(Directory.GetCurrentDirectory());
         }
 
+        internal List<NavPageMeta> SearchForPages(string searchTerm)
+        {
+            var allPages = Directory.GetFiles(_wikiPageDirectory);
+            var result = new List<NavPageMeta>();
+            foreach (var pagePath in allPages)
+            {
+                var pageMeta = BuildPageModel(pagePath);
+                if (pageMeta.Content.Contains(searchTerm))
+                {
+                    
+                    result.Add(GetNavMenuItem(pagePath));
+                }
+            }
+
+            return result;
+        }
+
         public PageManager(IGitManager gitManager, string wikiDirectory)
         {
             _gitManager = gitManager;
@@ -55,6 +72,11 @@ namespace Bliki.Data
                 {
                     _editingSessions.Remove(session);
                 }
+                if (_loadedPages.Contains(model))
+                {
+                    _loadedPages.Remove(model);
+                }
+                _loadedPages.Add(model);
 
                 return true;
             }
@@ -72,12 +94,17 @@ namespace Bliki.Data
 
             foreach (var path in filePaths)
             {
-                var fileName = Path.GetFileName(path).Replace(".md", "");
-                if (fileName == "bliki.exceptions") continue;
-                result.Add(new NavPageMeta(CreatePageTitle(fileName), fileName));
+                result.Add(GetNavMenuItem(path));
             }
 
             return result;
+        }
+
+
+        private NavPageMeta GetNavMenuItem(string path)
+        {
+            var fileName = Path.GetFileNameWithoutExtension(path);
+            return new NavPageMeta(CreatePageTitle(fileName), fileName);
         }
 
         internal void LockForEditing(WikiPageModel pageModel, string username)
@@ -151,10 +178,15 @@ namespace Bliki.Data
 
         private WikiPageModel BuildPageModel(string filePath)
         {
+            var title = CreatePageTitle(Path.GetFileNameWithoutExtension(filePath));
+            var pageLink = CreatePageLink(title);
+            var saved = _loadedPages.FirstOrDefault(p => p.PageLink == pageLink);
+            if (saved != null) return saved;
+
             var content = File.ReadAllText(filePath);
             var titleRgx = new Regex("<!-- TITLE: (.*) -->");
             var titleMatch = titleRgx.Match(content);
-            var title = CreatePageTitle(Path.GetFileNameWithoutExtension(filePath));
+            
             if (titleMatch.Success) 
             {
                 title = titleMatch.Result("$1");
@@ -172,13 +204,16 @@ namespace Bliki.Data
 
             content = content.Trim();
             
-            return new WikiPageModel
+            var model = new WikiPageModel
             {
                 Content = content,
                 Title = title,
                 SubTitle = subTitle,
-                PageLink = CreatePageLink(title)
+                PageLink = pageLink
             };
+            _loadedPages.Add(model);
+
+            return model;
         }
 
 
@@ -251,5 +286,6 @@ namespace Bliki.Data
         }
 
         private string _wikiPageDirectory = @"WikiPages";
+        private static List<WikiPageModel> _loadedPages = new List<WikiPageModel>();
     }
 }

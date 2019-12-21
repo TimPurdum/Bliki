@@ -3,3 +3,17 @@
 *\obj
 *\.idea
 *\UserStore.json
+/Bliki/WikiPages/glossary.md
+/Bliki/WikiPages/git-commands-to-remember.md
+/Bliki/WikiPages/feature-implementation-workflow.md
+/Bliki/WikiPages/directory-of-employees.md
+/Bliki/WikiPages/developer-orientation-agenda.md
+/Bliki/WikiPages/currently-assigned-tasks.md
+/Bliki/WikiPages/configuring-self-hosted-web-api-services-to-use-https.md
+/Bliki/WikiPages/common-shared-folders.md
+/Bliki/WikiPages/coding-conventions.md
+/Bliki/WikiPages/architecture.md
+/Bliki/WikiPages/administration.md
+/Bliki/WikiPages/5-0-qa-testing.md
+/Bliki/WikiPages/5-0-branching-strategy.md
+/Bliki/UserStore.json

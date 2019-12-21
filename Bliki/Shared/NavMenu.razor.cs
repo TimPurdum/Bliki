@@ -46,7 +46,10 @@ namespace Bliki.Shared
             try
             {
                 base.OnAfterRender(firstRender);
-                CheckRoute();
+                if (firstRender)
+                {
+                    CheckRoute();
+                }
             }
             catch (Exception ex)
             {
@@ -58,7 +61,8 @@ namespace Bliki.Shared
         private void CheckRoute()
         {
             var newUri = _navManager
-                        .ToBaseRelativePath(_navManager.Uri);
+                        .ToBaseRelativePath(_navManager.Uri)
+                        .Split('/')[0];
 
             var metaList = _pageManager.GetNavMenuMetas();
             if (!PageMetas.SequenceEqual(metaList))
