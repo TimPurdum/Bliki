@@ -6,6 +6,9 @@
 </div>
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column" style="border-bottom: 1px solid white;">
+        <LoginDisplay />
+    </ul>
     <h1>Sections</h1>
     <ul class="nav flex-column" style="border-bottom: 1px solid white;">
         @foreach (var meta in CurrentPageHeaders)
@@ -28,7 +31,6 @@
                 </NavLink>
             </li>
         }
-        <LoginDisplay />
     </ul>
 </div>
 

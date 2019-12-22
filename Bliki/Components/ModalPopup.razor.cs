@@ -2,7 +2,7 @@
 
 namespace Bliki.Components
 {
-	public partial class Modal
+	public partial class ModalPopup
     {
 		[Inject]
 		ModalService ModalService { get; set; } = default!;

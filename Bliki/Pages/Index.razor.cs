@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Bliki.Pages

@@ -133,9 +133,17 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "MailKit": {
+              "target": "Package",
+              "version": "[2.4.1, )"
+            },
             "Markdig.Signed": {
               "target": "Package",
               "version": "[0.18.0, )"
+            },
+            "Microsoft.AspNetCore.Blazor.DataAnnotations.Validation": {
+              "target": "Package",
+              "version": "[3.1.0-preview4.19579.2, )"
             },
             "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
               "target": "Package",

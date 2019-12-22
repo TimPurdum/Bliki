@@ -1,17 +1,32 @@
-﻿<AuthorizeView>
-    <Authorized>
-        <li>
-            <form method="post" action="Identity/Account/LogOut">
-                <button type="submit" class="nav-link btn btn-link">Log out</button>
-            </form>
-        </li>
-    </Authorized>
-    <NotAuthorized>
-        <li>
-            <a href="Identity/Account/Register">Register</a>
-        </li>
-        <li>
-            <a href="Identity/Account/Login">Log in</a>
-        </li>
-    </NotAuthorized>
-</AuthorizeView>
+﻿@using Microsoft.AspNetCore.Identity
+@using Bliki.Data
+@inject BlikiUserManager  UserManager
+@inject NavigationManager NavManager
+    <div style="margin:10px;">
+        <AuthorizeView>
+            <Authorized>
+                @if (UserManager.IsInRole(context.User, "admin"))
+                {
+                    <li>
+                        <button class="nav-link btn btn-link" @onclick="@(() => NavManager.NavigateTo("/admin"))">Admin</button>
+                    </li>
+                }
+                <li>
+                    <form method="post" action="Identity/Account/LogOut">
+                        <button type="submit" class="nav-link btn btn-link">Log out</button>
+                    </form>
+                </li>
+            </Authorized>
+            <NotAuthorized>
+                @if (!UserManager.Users.Any())
+                {
+                    <li>
+                        <a href="Identity/Account/Register">Register</a>
+                    </li>
+                }
+                <li>
+                    <a href="Identity/Account/Login">Log in</a>
+                </li>
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>

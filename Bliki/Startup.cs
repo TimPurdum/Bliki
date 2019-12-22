@@ -10,6 +10,8 @@ using Bliki.Data;
 using Bliki.Interfaces;
 using Bliki.Components;
 using Microsoft.AspNetCore.HttpOverrides;
+using Bliki.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Bliki
 {
@@ -26,15 +28,25 @@ namespace Bliki
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDefaultIdentity<IdentityUser>().AddUserStore<BlikiUserStore>();
+            services.AddDefaultIdentity<BlikiUser>()
+                .AddUserStore<BlikiUserStore>()
+                .AddRoles<IdentityRole>()
+                .AddRoleStore<BlikiRoleStore>()
+                .AddUserManager<BlikiUserManager>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+            services.AddScoped<AuthenticationStateProvider, 
+                RevalidatingIdentityAuthenticationStateProvider<BlikiUser>>();
             services.AddScoped<PageManager>();
             services.AddScoped(typeof(IGitManager), typeof(GitManager));
             services.AddScoped<MarkdownEditorManager>();
             services.AddScoped<ModalService>();
             services.AddHttpContextAccessor();
+            services.AddSingleton<IEmailConfiguration>(Configuration.GetSection("EmailConfiguration")
+                .Get<EmailConfiguration>());
+            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IEmailSender, EmailService>();
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

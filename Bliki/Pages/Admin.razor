@@ -1,0 +1,45 @@
+﻿@page "/admin"
+@attribute [Authorize(Roles = "admin")]
+
+<h1>Admin</h1>
+
+<h2>Add User</h2>
+<EditForm Model="NewUser" OnValidSubmit="AddUser">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="Email" @bind-Value="NewUser.Email" />
+    <InputText id="Password" @bind-Value="NewUser.Password" />
+
+    <button type="submit">Submit</button>
+</EditForm>
+
+<h2>Users</h2>
+<table class="table">
+    <tr>
+        <th>User</th>
+        <th>Make Admin</th>
+        <th>Delete</th>
+    </tr>
+    @foreach (var u in _allUsers)
+    {
+        <tr>
+            <td>@u.UserName</td>
+            <td>
+                @if (u.Roles.Contains("admin"))
+                {
+                    <input type="checkbox" checked @onchange="() => ChangeAdminStatus(u.Id)" />
+                }
+                else
+                {
+                    <input type="checkbox" @onchange="() => ChangeAdminStatus(u.Id)" />;
+                }
+            </td>
+            <td>
+                <button @onclick="() => DeleteUser(u.Id)">
+                    <span class="oi oi-trash" />
+                </button>
+            </td>
+        </tr>
+    }
+</table>

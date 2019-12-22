@@ -9,26 +9,34 @@ using System.Linq;
 
 namespace Bliki.Data
 {
-    public class BlikiUserStore : IUserStore<IdentityUser>, IUserEmailStore<IdentityUser>,
-        IUserPhoneNumberStore<IdentityUser>, IUserTwoFactorStore<IdentityUser>, 
-        IUserPasswordStore<IdentityUser>
+    public class BlikiUserStore : IUserStore<BlikiUser>, IUserEmailStore<BlikiUser>,
+        IUserPhoneNumberStore<BlikiUser>, IUserTwoFactorStore<BlikiUser>,
+        IUserPasswordStore<BlikiUser>, IQueryableUserStore<BlikiUser>, IUserRoleStore<BlikiUser>
     {
         private readonly string _saveFilePath;
-        private readonly List<IdentityUser> _users;
+        private readonly List<BlikiUser> _users;
 
         public BlikiUserStore()
         {
             _saveFilePath = Path.Combine(Directory.GetCurrentDirectory(), "UserStore.json");
-            _users = new List<IdentityUser>();
+            _users = new List<BlikiUser>();
             LoadUsers();
         }
 
-        public Task<IdentityResult> CreateAsync(IdentityUser user, 
+        public Task<IdentityResult> CreateAsync(BlikiUser user,
             CancellationToken cancellationToken)
         {
             try
             {
                 LoadUsers();
+                if (!_users.Any())
+                {
+                    user.Roles = new[] { "admin" };
+                }
+                if (string.IsNullOrEmpty(user.Email))
+                {
+                    user.Email = user.UserName;
+                }
                 if (_users.Any(u => u.Email == user.Email || u.Id == user.Id))
                 {
                     var savedUser = _users.First(u => u.Email == user.Email || u.Id == user.Id);
@@ -46,7 +54,7 @@ namespace Bliki.Data
         }
 
 
-        public Task<IdentityResult> DeleteAsync(IdentityUser user, 
+        public Task<IdentityResult> DeleteAsync(BlikiUser user,
             CancellationToken cancellationToken)
         {
             try
@@ -67,7 +75,7 @@ namespace Bliki.Data
             // nothing to dispose;
         }
 
-        public Task<IdentityUser> FindByIdAsync(string userId, 
+        public Task<BlikiUser> FindByIdAsync(string userId,
             CancellationToken cancellationToken)
         {
             return Task.Run(() =>
@@ -77,7 +85,7 @@ namespace Bliki.Data
             }, cancellationToken);
         }
 
-        public Task<IdentityUser> FindByNameAsync(string normalizedUserName, 
+        public Task<BlikiUser> FindByNameAsync(string normalizedUserName,
             CancellationToken cancellationToken)
         {
             return Task.Run(() =>
@@ -87,7 +95,7 @@ namespace Bliki.Data
             }, cancellationToken);
         }
 
-        public Task<string> GetNormalizedUserNameAsync(IdentityUser user, 
+        public Task<string> GetNormalizedUserNameAsync(BlikiUser user,
             CancellationToken cancellationToken)
         {
             return Task.Run(() =>
@@ -96,7 +104,7 @@ namespace Bliki.Data
             }, cancellationToken);
         }
 
-        public Task<string> GetUserIdAsync(IdentityUser user, 
+        public Task<string> GetUserIdAsync(BlikiUser user,
             CancellationToken cancellationToken)
         {
             return Task.Run(() =>
@@ -105,7 +113,7 @@ namespace Bliki.Data
             }, cancellationToken);
         }
 
-        public Task<string> GetUserNameAsync(IdentityUser user, 
+        public Task<string> GetUserNameAsync(BlikiUser user,
             CancellationToken cancellationToken)
         {
             return Task.Run(() =>
@@ -114,21 +122,21 @@ namespace Bliki.Data
             }, cancellationToken);
         }
 
-        public Task SetNormalizedUserNameAsync(IdentityUser user, string normalizedName, 
+        public Task SetNormalizedUserNameAsync(BlikiUser user, string normalizedName,
             CancellationToken cancellationToken)
         {
             user.NormalizedUserName = normalizedName;
             return Task.CompletedTask;
         }
 
-        public Task SetUserNameAsync(IdentityUser user, string userName, 
+        public Task SetUserNameAsync(BlikiUser user, string userName,
             CancellationToken cancellationToken)
         {
             user.UserName = userName;
             return Task.CompletedTask;
         }
 
-        public Task<IdentityResult> UpdateAsync(IdentityUser user, 
+        public Task<IdentityResult> UpdateAsync(BlikiUser user,
             CancellationToken cancellationToken)
         {
             try
@@ -148,15 +156,22 @@ namespace Bliki.Data
 
         private void LoadUsers()
         {
-            _users.Clear();
-            if (File.Exists(_saveFilePath))
+            try
             {
-                string json;
-                lock (_fileLock)
+                _users.Clear();
+                if (File.Exists(_saveFilePath))
                 {
-                    json = File.ReadAllText(_saveFilePath);
+                    string json;
+                    lock (_fileLock)
+                    {
+                        json = File.ReadAllText(_saveFilePath);
+                    }
+                    _users.AddRange(JsonSerializer.Deserialize<BlikiUser[]>(json));
                 }
-                _users.AddRange(JsonSerializer.Deserialize<IdentityUser[]>(json));
+            }
+            catch
+            {
+                //
             }
         }
 
@@ -173,6 +188,12 @@ namespace Bliki.Data
 
         private object _fileLock = new object();
 
+        public IQueryable<BlikiUser> Users {
+            get {
+                LoadUsers();
+                return _users.AsQueryable();
+            }
+        }
 
         private IdentityResult GetIdentityError(Exception ex)
         {
@@ -186,7 +207,7 @@ namespace Bliki.Data
             });
         }
 
-        public Task<IdentityUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
+        public Task<BlikiUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
@@ -195,7 +216,7 @@ namespace Bliki.Data
             }, cancellationToken);
         }
 
-        public Task<string> GetEmailAsync(IdentityUser user, CancellationToken cancellationToken)
+        public Task<string> GetEmailAsync(BlikiUser user, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
@@ -203,7 +224,7 @@ namespace Bliki.Data
             }, cancellationToken);
         }
 
-        public Task<bool> GetEmailConfirmedAsync(IdentityUser user, CancellationToken cancellationToken)
+        public Task<bool> GetEmailConfirmedAsync(BlikiUser user, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
@@ -211,7 +232,7 @@ namespace Bliki.Data
             }, cancellationToken);
         }
 
-        public Task<string> GetNormalizedEmailAsync(IdentityUser user, CancellationToken cancellationToken)
+        public Task<string> GetNormalizedEmailAsync(BlikiUser user, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
@@ -219,25 +240,25 @@ namespace Bliki.Data
             }, cancellationToken);
         }
 
-        public Task SetEmailAsync(IdentityUser user, string email, CancellationToken cancellationToken)
+        public Task SetEmailAsync(BlikiUser user, string email, CancellationToken cancellationToken)
         {
             user.NormalizedEmail = email.ToUpperInvariant();
             return Task.CompletedTask;
         }
 
-        public Task SetEmailConfirmedAsync(IdentityUser user, bool confirmed, CancellationToken cancellationToken)
+        public Task SetEmailConfirmedAsync(BlikiUser user, bool confirmed, CancellationToken cancellationToken)
         {
             user.EmailConfirmed = confirmed;
             return Task.CompletedTask;
         }
 
-        public Task SetNormalizedEmailAsync(IdentityUser user, string normalizedEmail, CancellationToken cancellationToken)
+        public Task SetNormalizedEmailAsync(BlikiUser user, string normalizedEmail, CancellationToken cancellationToken)
         {
             user.NormalizedEmail = normalizedEmail;
             return Task.CompletedTask;
         }
 
-        public Task<string> GetPhoneNumberAsync(IdentityUser user, CancellationToken cancellationToken)
+        public Task<string> GetPhoneNumberAsync(BlikiUser user, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
@@ -245,7 +266,7 @@ namespace Bliki.Data
             }, cancellationToken);
         }
 
-        public Task<bool> GetPhoneNumberConfirmedAsync(IdentityUser user, CancellationToken cancellationToken)
+        public Task<bool> GetPhoneNumberConfirmedAsync(BlikiUser user, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
@@ -253,19 +274,19 @@ namespace Bliki.Data
             }, cancellationToken);
         }
 
-        public Task SetPhoneNumberAsync(IdentityUser user, string phoneNumber, CancellationToken cancellationToken)
+        public Task SetPhoneNumberAsync(BlikiUser user, string phoneNumber, CancellationToken cancellationToken)
         {
             user.PhoneNumber = phoneNumber;
             return Task.CompletedTask;
         }
 
-        public Task SetPhoneNumberConfirmedAsync(IdentityUser user, bool confirmed, CancellationToken cancellationToken)
+        public Task SetPhoneNumberConfirmedAsync(BlikiUser user, bool confirmed, CancellationToken cancellationToken)
         {
             user.PhoneNumberConfirmed = confirmed;
             return Task.CompletedTask;
         }
 
-        public Task<bool> GetTwoFactorEnabledAsync(IdentityUser user, CancellationToken cancellationToken)
+        public Task<bool> GetTwoFactorEnabledAsync(BlikiUser user, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
@@ -273,13 +294,13 @@ namespace Bliki.Data
             }, cancellationToken);
         }
 
-        public Task SetTwoFactorEnabledAsync(IdentityUser user, bool enabled, CancellationToken cancellationToken)
+        public Task SetTwoFactorEnabledAsync(BlikiUser user, bool enabled, CancellationToken cancellationToken)
         {
             user.TwoFactorEnabled = enabled;
             return Task.CompletedTask;
         }
 
-        public Task<string> GetPasswordHashAsync(IdentityUser user, CancellationToken cancellationToken)
+        public Task<string> GetPasswordHashAsync(BlikiUser user, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
@@ -287,7 +308,7 @@ namespace Bliki.Data
             }, cancellationToken);
         }
 
-        public Task<bool> HasPasswordAsync(IdentityUser user, CancellationToken cancellationToken)
+        public Task<bool> HasPasswordAsync(BlikiUser user, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
@@ -295,9 +316,56 @@ namespace Bliki.Data
             }, cancellationToken);
         }
 
-        public Task SetPasswordHashAsync(IdentityUser user, string passwordHash, CancellationToken cancellationToken)
+        public Task SetPasswordHashAsync(BlikiUser user, string passwordHash, CancellationToken cancellationToken)
         {
             user.PasswordHash = passwordHash;
+            return Task.CompletedTask;
+        }
+
+        public Task AddToRoleAsync(BlikiUser user, string roleName, CancellationToken cancellationToken)
+        {
+            if (!user.Roles.Contains(roleName))
+            {
+                var roles = user.Roles.ToList();
+                roles.Add(roleName);
+                user.Roles = roles.ToArray();
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task<IList<string>> GetRolesAsync(BlikiUser user, CancellationToken cancellationToken)
+        {
+            return Task.Run(() => 
+            {
+                return user.Roles as IList<string>;
+            });
+        }
+
+        public Task<IList<BlikiUser>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
+        {
+            return Task.Run(() =>
+            {
+                LoadUsers();
+                return _users.Where(u => u.Roles.Contains(roleName)).ToArray() as IList<BlikiUser>;
+            });
+        }
+
+        public Task<bool> IsInRoleAsync(BlikiUser user, string roleName, CancellationToken cancellationToken)
+        {
+            return Task.Run(() =>
+            {
+                return user.Roles.Contains(roleName);
+            });
+        }
+
+        public Task RemoveFromRoleAsync(BlikiUser user, string roleName, CancellationToken cancellationToken)
+        {
+            if (user.Roles.Contains(roleName))
+            {
+                var roles = user.Roles.ToList();
+                roles.Remove(roleName);
+                user.Roles = roles.ToArray();
+            }
             return Task.CompletedTask;
         }
     }

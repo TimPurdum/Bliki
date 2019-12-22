@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Bliki.Data
+﻿namespace Bliki.Data
 {
     public static class TextMarkers
     {
