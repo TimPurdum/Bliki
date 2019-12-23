@@ -2,6 +2,9 @@
 
 Bliki was designed specifically for developer teams, but could be adapted to any Wiki situation.
 
+Live version at [bliki.cedarrivertech.com](https://bliki.cedarrivertech.com). 
+Email me at tim@cedarrivertech.com to request to be added as an editor.
+
 ## Git Integration
 To use automatic git commits on page updates, set the following value in *appsettings.json*.
 ```json
