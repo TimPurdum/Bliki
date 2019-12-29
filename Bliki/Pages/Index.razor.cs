@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace Bliki.Pages
@@ -31,6 +32,12 @@ namespace Bliki.Pages
         private ModalService Modal { get; set; } = default!;
         private WikiPageModel PageModel { get; set; } = new WikiPageModel();
 
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            _userIdentity = _httpContextAccessor.HttpContext.User.Identity;
+        }
 
 
         protected override void OnParametersSet()
@@ -75,7 +82,7 @@ namespace Bliki.Pages
         {
             if (_pageManager.CanEdit(PageModel))
             {
-                if (_httpContextAccessor.HttpContext.User.Identity.Name is string username)
+                if (_userIdentity?.Name is string username)
                 {
                     _pageManager.LockForEditing(PageModel, username);
                     _navManager.NavigateTo($"editor/{PageLink ?? "home"}");
@@ -105,6 +112,7 @@ Please try again later.");
 
         private string _previousSectionLink = "";
         private string _previousPageLink = "";
+        private IIdentity? _userIdentity;
 
         private void ClearSearch()
         {

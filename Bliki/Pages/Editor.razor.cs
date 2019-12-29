@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
 using System;
+using System.Security.Principal;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -51,6 +52,12 @@ namespace Bliki.Pages
             
         protected Toolbar? Toolbar { get; set; }
 
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            _userIdentity = _httpContextAccessor.HttpContext.User.Identity;
+        }
+
         protected override void OnAfterRender(bool firstRender)
         {
             try
@@ -78,7 +85,7 @@ namespace Bliki.Pages
 
         protected void Save()
         {
-            _pageManager.SavePage(PageModel, _httpContextAccessor.HttpContext.User.Identity.Name);
+            _pageManager.SavePage(PageModel, _userIdentity?.Name);
 
             _navManager.NavigateTo($"/{PageModel.PageLink}");
         }
@@ -117,7 +124,7 @@ namespace Bliki.Pages
             // Modal.Show("Delete", new ConfirmDeleteForm() { PageLink = PageLink });
             if (PageModel.PageLink != "new-page")
             {
-                _pageManager.DeletePage(PageLink, _httpContextAccessor.HttpContext.User.Identity.Name);
+                _pageManager.DeletePage(PageLink, _userIdentity?.Name);
             }
         }
 
@@ -351,6 +358,7 @@ namespace Bliki.Pages
         private string _beforePosition = "";
         private string _afterPosition = "";
         private string[] _allLines = new string[0];
+        private IIdentity? _userIdentity;
         private readonly Regex _boldRegex = new Regex(@"(?:^|[^\*])(\*\*)(?:[^\*]|$)");
         private readonly Regex _italicRegex = new Regex(@"(?:^|[^\*])(\*)(?:[^\*]|$)");
         private readonly Regex _strikethroughRegex = new Regex(@"(?:^|[^~])(~~)(?:[^~]|$)");
