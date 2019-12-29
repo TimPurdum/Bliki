@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Bliki.Pages
@@ -75,7 +76,12 @@ namespace Bliki.Pages
         {
             if (_pageManager.CanEdit(PageModel))
             {
-                if (_httpContextAccessor.HttpContext.User.Identity.Name is string username)
+                Debug.WriteLine($"Context Accessor: {(_httpContextAccessor != null ? "True" : "False")}");
+                Debug.WriteLine($"Context: {(_httpContextAccessor?.HttpContext != null ? "True" : "False")}");
+                Debug.WriteLine($"User: {(_httpContextAccessor?.HttpContext?.User != null ? "True": "False")}");
+                Debug.WriteLine($"Identity: {(_httpContextAccessor?.HttpContext?.User?.Identity != null ? "True" : "False")}");
+                Debug.WriteLine($"Name: {(_httpContextAccessor?.HttpContext?.User?.Identity?.Name != null ? _httpContextAccessor.HttpContext.User.Identity.Name : "False")}");
+                if (_httpContextAccessor?.HttpContext?.User?.Identity?.Name is string username)
                 {
                     _pageManager.LockForEditing(PageModel, username);
                     _navManager.NavigateTo($"editor/{PageLink ?? "home"}");
