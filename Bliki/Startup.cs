@@ -12,6 +12,8 @@ using Bliki.Components;
 using Microsoft.AspNetCore.HttpOverrides;
 using Bliki.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Http;
+using Bliki.Shared;
 
 namespace Bliki
 {
@@ -46,7 +48,7 @@ namespace Bliki
                 .Get<EmailConfiguration>());
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IEmailSender, EmailService>();
-            services.AddHttpContextAccessor();
+            services.AddScoped<BlikiHttpContextAccessor>();
             services.AddMvc();
         }
 

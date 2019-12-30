@@ -1,5 +1,6 @@
 ﻿using Bliki.Components;
 using Bliki.Data;
+using Bliki.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
@@ -27,7 +28,7 @@ namespace Bliki.Pages
         [Inject]
         protected IJSRuntime _jsRuntime { get; set; } = default!;
         [Inject]
-        private IHttpContextAccessor _httpContextAccessor { get; set; } = default!;
+        private BlikiHttpContextAccessor _httpContextAccessor { get; set; } = default!;
         [Inject]
         private ModalService Modal { get; set; } = default!;
         private WikiPageModel PageModel { get; set; } = new WikiPageModel();
@@ -36,7 +37,7 @@ namespace Bliki.Pages
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            _userIdentity = _httpContextAccessor.HttpContext.User.Identity;
+            _userIdentity = _httpContextAccessor.Context.User.Identity;
         }
 
 

@@ -1,5 +1,6 @@
 ﻿using Bliki.Components;
 using Bliki.Data;
+using Bliki.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Http;
@@ -40,7 +41,7 @@ namespace Bliki.Pages
         [Inject]
         private NavigationManager _navManager { get; set; } = default!;
         [Inject]
-        private IHttpContextAccessor _httpContextAccessor { get; set; } = default!;
+        private BlikiHttpContextAccessor _httpContextAccessor { get; set; } = default!;
         [Inject]
         private IJSRuntime _jsRuntime { get; set; } = default!;
         [Inject]
@@ -55,7 +56,7 @@ namespace Bliki.Pages
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            _userIdentity = _httpContextAccessor.HttpContext.User.Identity;
+            _userIdentity = _httpContextAccessor.Context.User.Identity;
         }
 
         protected override void OnAfterRender(bool firstRender)
