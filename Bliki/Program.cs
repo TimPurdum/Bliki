@@ -11,7 +11,7 @@ namespace Bliki
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                CreateKestrelHostBuilder(args).Build().Run();
+                CreateHostBuilder(args).Build().Run();
             }
             else
             {
@@ -34,8 +34,8 @@ namespace Bliki
                     webBuilder.UseStartup<Startup>()
                     .UseKestrel(options =>
                     {
-                        //options.Listen(IPAddress.Loopback, 5200);
-                        //options.Listen(IPAddress.Loopback, 5201);
+                        options.Listen(IPAddress.Loopback, 5200);
+                        options.Listen(IPAddress.Loopback, 5201);
                     });
                 });
     }
