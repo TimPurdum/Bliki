@@ -2,6 +2,7 @@
 using Bliki.Data;
 using Bliki.Shared;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
 using System;
@@ -28,16 +29,17 @@ namespace Bliki.Pages
         [Inject]
         protected IJSRuntime _jsRuntime { get; set; } = default!;
         [Inject]
-        private BlikiHttpContextAccessor _httpContextAccessor { get; set; } = default!;
+        private IHttpContextAccessor _httpContextAccessor { get; set; } = default!;
         [Inject]
         private ModalService Modal { get; set; } = default!;
         private WikiPageModel PageModel { get; set; } = new WikiPageModel();
+        [Inject]
+        private AuthenticationStateProvider _authenticationStateProvider { get; set; } = default!;
 
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            base.OnInitialized();
-            _userIdentity = _httpContextAccessor.Context.User.Identity;
+            _userIdentity = (await _authenticationStateProvider.GetAuthenticationStateAsync())?.User?.Identity;
         }
 
 

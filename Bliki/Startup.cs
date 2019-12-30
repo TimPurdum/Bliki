@@ -48,7 +48,6 @@ namespace Bliki
                 .Get<EmailConfiguration>());
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IEmailSender, EmailService>();
-            services.AddScoped<BlikiHttpContextAccessor>();
             services.AddMvc();
         }
 

@@ -2,6 +2,7 @@
 using Bliki.Data;
 using Bliki.Shared;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
@@ -41,7 +42,7 @@ namespace Bliki.Pages
         [Inject]
         private NavigationManager _navManager { get; set; } = default!;
         [Inject]
-        private BlikiHttpContextAccessor _httpContextAccessor { get; set; } = default!;
+        private IHttpContextAccessor _httpContextAccessor { get; set; } = default!;
         [Inject]
         private IJSRuntime _jsRuntime { get; set; } = default!;
         [Inject]
@@ -52,11 +53,13 @@ namespace Bliki.Pages
         protected WikiPageModel PageModel { get; set; } = new WikiPageModel();
             
         protected Toolbar? Toolbar { get; set; }
+        [Inject]
+        private AuthenticationStateProvider _authenticationStateProvider { get; set; } = default!;
 
-        protected override void OnInitialized()
+
+        protected override async Task OnInitializedAsync()
         {
-            base.OnInitialized();
-            _userIdentity = _httpContextAccessor.Context.User.Identity;
+            _userIdentity = (await _authenticationStateProvider.GetAuthenticationStateAsync())?.User?.Identity;
         }
 
         protected override void OnAfterRender(bool firstRender)
