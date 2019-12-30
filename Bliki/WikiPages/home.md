@@ -1,7 +1,7 @@
 <!-- TITLE: Home -->
 <!-- SUBTITLE: Bliki - The Blazor-Powered Wiki -->
 # Welcome to Bliki
-
+ 
 Bliki was designed specifically for developer teams, but could be adapted to any Wiki situation.
 
 ## Git Integration

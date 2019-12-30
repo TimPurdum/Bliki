@@ -1,6 +1,8 @@
 ﻿using Bliki.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Text.RegularExpressions;
@@ -25,19 +27,24 @@ namespace Bliki.Data
 
             await Task.Run(() =>
             {
-                using (var shell = PowerShell.Create())
-                {
-                    if (shell.Runspace.RunspaceStateInfo.State != RunspaceState.Opened)
-                    {
-                        shell.Runspace.ResetRunspaceState();
-                        shell.Runspace.Open();
-                    }
+                var startInfo = new ProcessStartInfo("git");
+                startInfo.RedirectStandardError = true;
+                startInfo.RedirectStandardOutput = true;
+                startInfo.WorkingDirectory = Directory.GetCurrentDirectory();
+                startInfo.Arguments = "add *";
+                var proc1 = Process.Start(startInfo);
+                var output = proc1.StandardOutput.ReadToEnd();
+                var error = proc1.StandardError.ReadToEnd();
 
-                    shell.AddScript(@"git add *");
-                    shell.AddScript($@"git commit -m '{(delete ? "Deleting" : "Saving")} file {_fileNameCleaner.Replace(fileName, "")} at {DateTime.Now.ToString()} by {_userNameCleaner.Replace(userName, "")}'");
-                    shell.AddScript(@"git push");
-                    var results = shell.Invoke();
-                }
+                startInfo.Arguments = $@"commit -m ""{(delete ? "Deleting" : "Saving")} file {_fileNameCleaner.Replace(fileName, "")} at {DateTime.Now.ToString("MM-dd-yyyy")} by {_userNameCleaner.Replace(userName, "")}""";
+                var proc2 = Process.Start(startInfo);
+                output = proc2.StandardOutput.ReadToEnd();
+                error = proc2.StandardError.ReadToEnd();
+                
+                startInfo.Arguments = "push";
+                var proc3 = Process.Start(startInfo);
+                output = proc3.StandardOutput.ReadToEnd();
+                error = proc3.StandardError.ReadToEnd();
             });
         }
     }

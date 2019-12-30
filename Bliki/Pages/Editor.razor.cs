@@ -42,8 +42,6 @@ namespace Bliki.Pages
         [Inject]
         private NavigationManager _navManager { get; set; } = default!;
         [Inject]
-        private IHttpContextAccessor _httpContextAccessor { get; set; } = default!;
-        [Inject]
         private IJSRuntime _jsRuntime { get; set; } = default!;
         [Inject]
         private MarkdownEditorManager _editorManager { get; set; } = default!;
