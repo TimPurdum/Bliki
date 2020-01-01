@@ -27,6 +27,9 @@ namespace Bliki.Data
 
             await Task.Run(() =>
             {
+                Process.Start("git", $"config user.email \"{userName}\"");
+                Process.Start("git", $"config user.name \"{userName}\"");
+
                 var startInfo = new ProcessStartInfo("git");
                 startInfo.RedirectStandardError = true;
                 startInfo.RedirectStandardOutput = true;
