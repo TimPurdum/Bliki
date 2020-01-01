@@ -33,18 +33,18 @@ namespace Bliki.Data
                 startInfo.WorkingDirectory = Directory.GetCurrentDirectory();
                 startInfo.Arguments = "add *";
                 var proc1 = Process.Start(startInfo);
-                var output = proc1.StandardOutput.ReadToEnd();
-                var error = proc1.StandardError.ReadToEnd();
+                Debug.WriteLine(proc1.StandardOutput.ReadToEnd());
+                Debug.WriteLine(proc1.StandardError.ReadToEnd());
 
                 startInfo.Arguments = $@"commit -m ""{(delete ? "Deleting" : "Saving")} file {_fileNameCleaner.Replace(fileName, "")} at {DateTime.Now.ToString("MM-dd-yyyy")} by {_userNameCleaner.Replace(userName, "")}""";
                 var proc2 = Process.Start(startInfo);
-                output = proc2.StandardOutput.ReadToEnd();
-                error = proc2.StandardError.ReadToEnd();
-                
+                Debug.WriteLine(proc2.StandardOutput.ReadToEnd());
+                Debug.WriteLine(proc2.StandardError.ReadToEnd());
+
                 startInfo.Arguments = "push";
                 var proc3 = Process.Start(startInfo);
-                output = proc3.StandardOutput.ReadToEnd();
-                error = proc3.StandardError.ReadToEnd();
+                Debug.WriteLine(proc3.StandardOutput.ReadToEnd());
+                Debug.WriteLine(proc3.StandardError.ReadToEnd());
             });
         }
     }
