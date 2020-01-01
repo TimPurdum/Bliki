@@ -81,23 +81,23 @@ namespace Bliki.Pages
 
         private void OpenEditor()
         {
-            if (_pageManager.CanEdit(PageModel))
+            if (_userIdentity?.Name is string username)
             {
-                if (_userIdentity?.Name is string username)
+                if (_pageManager.CanEdit(PageModel, username))
                 {
                     _pageManager.LockForEditing(PageModel, username);
                     _navManager.NavigateTo($"editor/{PageLink ?? "home"}");
                 }
                 else
                 {
-                    Modal.Show("Can't Edit", "User Session is Invalid! Please log in again.");
+                    Modal.Show("Can't Edit",
+                        @"Sorry, that page is currently being edited by another user.
+Please try again later.");
                 }
             }
             else
             {
-                Modal.Show("Can't Edit", 
-                    @"Sorry, that page is currently being edited by another user.
-Please try again later.");
+                Modal.Show("Can't Edit", "User Session is Invalid! Please log in again.");
             }
         }
 

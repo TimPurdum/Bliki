@@ -109,7 +109,10 @@ namespace Bliki.Data
 
         internal void LockForEditing(WikiPageModel pageModel, string username)
         {
-            _editingSessions.Add(new EditingSession(pageModel, username));
+            if (!_editingSessions.Any(s => s.PageModel.Equals(pageModel) && s.UserName.Equals(username)))
+            {
+                _editingSessions.Add(new EditingSession(pageModel, username));
+            }
         }
 
         internal void Cancel(WikiPageModel model)
@@ -120,9 +123,9 @@ namespace Bliki.Data
             }
         }
 
-        internal bool CanEdit(WikiPageModel pageModel)
+        internal bool CanEdit(WikiPageModel pageModel, string username)
         {
-            return !_editingSessions.Any(s => s.PageModel.Equals(pageModel));
+            return !_editingSessions.Any(s => s.PageModel.Equals(pageModel) && !s.UserName.Equals(username));
         }
 
         public IList<NavPageMeta> GetCurrentPageHeaders(string pageLink)

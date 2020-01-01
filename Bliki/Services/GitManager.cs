@@ -47,5 +47,60 @@ namespace Bliki.Data
                 Debug.WriteLine(proc3.StandardError.ReadToEnd());
             });
         }
+
+        public string? FetchCommitLog(string? fileName)
+        {
+            if (!_enabled) return null;
+
+            var procInfo = new ProcessStartInfo("git");
+            procInfo.RedirectStandardOutput = true;
+            procInfo.RedirectStandardError = true;
+            
+            if (string.IsNullOrEmpty(fileName))
+            {
+                procInfo.Arguments = "log";
+            }
+            else
+            {
+                procInfo.Arguments = $"log --follow -p -- **/{fileName}";
+            }
+
+            var proc = Process.Start(procInfo);
+            
+            var raw = proc.StandardOutput.ReadToEnd();
+            return FormatGitLog(raw);
+        }
+
+
+        private string FormatGitLog(string raw)
+        {
+            var lines = raw.Split('\n', '\r');
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                if (line.StartsWith("@@"))
+                {
+                    line = line.Insert(0, "<span style=\"color:blue\">");
+                    line = line.Insert(line.LastIndexOf("@@") + 2, "</span>");
+                }
+                else if (line.StartsWith("-"))
+                {
+                    line = line.Insert(0, "<span style=\"color:red\">");
+                    line = line + "</span>";
+                }
+                else if (line.StartsWith("+"))
+                {
+                    line = line.Insert(0, "<span style=\"color:green\">");
+                    line = line + "</span>";
+                }
+                else if (line.StartsWith("commit "))
+                {
+                    line = line.Insert(0, "<span style=\"color:yellow\">");
+                    line = line + "</span>";
+                }
+                lines[i] = line;
+            }
+            return string.Join("</br>", lines);
+        }
     }
 }

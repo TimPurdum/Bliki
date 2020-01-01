@@ -1,0 +1,27 @@
+﻿@page "/gitlog"
+@page "/gitlog/{FileName}"
+<h3>GitLog @FileName</h3>
+
+<div class="git-log">
+    @((MarkupString)Content)
+</div>
+
+@code {
+    [Parameter]
+    public string? FileName { get; set; }
+    private string Content { get; set; } = "";
+
+    [Inject]
+    public IGitManager GitManager { get; set; } = default!;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        var newContent = GitManager.FetchCommitLog(FileName) ?? "";
+        if (newContent != Content)
+        {
+            Content = newContent;
+            StateHasChanged();
+        }
+    }
+}

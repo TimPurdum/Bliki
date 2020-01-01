@@ -196,6 +196,12 @@ namespace Bliki.Pages
         }
 
 
+        private void GitHistory()
+        {
+            _navManager.NavigateTo($"/gitlog/{PageLink}.md");
+        }
+
+
         private async Task CheckFormattingPosition()
         {
             try
