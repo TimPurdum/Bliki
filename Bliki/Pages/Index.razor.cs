@@ -52,26 +52,18 @@ namespace Bliki.Pages
         {
             try
             {
-                var fragment = new Uri(_navManager.Uri).Fragment;
-                if (fragment.StartsWith("#"))
-                {
-                    _navManager.NavigateTo($"{_previousPageLink}/{fragment.Replace("#", "")}");
-                    return;
-                }
                 if (string.IsNullOrEmpty(PageLink))
                 {
                     _navManager.NavigateTo(string.IsNullOrEmpty(_previousPageLink) ? "/home" : _previousPageLink, true);
                     return;
                 }
+                var fragment = new Uri(_navManager.Uri).Fragment;
+                if (fragment.StartsWith("#"))
+                {
+                    ScrollToElementId(fragment.Replace("#", ""));
+                }
 
                 _previousPageLink = PageLink;
-
-                if (SectionLink != _previousSectionLink &&
-                        !string.IsNullOrEmpty(SectionLink))
-                {
-                    ScrollToElementId(SectionLink);
-                    _previousSectionLink = SectionLink;
-                }
             }
             catch (Exception ex)
             {
@@ -110,8 +102,6 @@ Please try again later.");
             });
         }
 
-
-        private string _previousSectionLink = "";
         private string _previousPageLink = "";
         private IIdentity? _userIdentity;
 
