@@ -29,11 +29,15 @@ namespace Bliki.Data
             var result = new List<NavPageMeta>();
             foreach (var pagePath in allPages)
             {
-                var pageMeta = BuildPageModel(pagePath);
+                var pageMeta = BuildPageModel(pagePath, null);
                 if (pageMeta.Content.Contains(searchTerm))
                 {
-                    
-                    result.Add(GetNavMenuItem(pagePath));
+                    string? folder = Path.GetFullPath(Path.GetDirectoryName(pagePath)!);
+                    if (folder != null && folder.EndsWith("WikiPages"))
+                    {
+                        folder = null;
+                    }
+                    result.Add(GetNavMenuItem(pagePath, folder));
                 }
             }
 
@@ -57,12 +61,13 @@ namespace Bliki.Data
 
                 if (model.PageLink != CreatePageLink(model.Title))
                 {
-                    DeletePage(model.PageLink, userName);
+                    DeletePage(model.PageLink, userName, model.Folder);
                     model.PageLink = CreatePageLink(model.Title);
                 }
 
                 var file = BuildMarkdownFileContent(model);
-                var savePath = GetFilePath(model.PageLink);
+                var savePath = GetFilePath(model.PageLink, model.Folder);
+                
                 File.WriteAllText(savePath, file);
                 Task.Run(async () =>
                 {
@@ -94,17 +99,22 @@ namespace Bliki.Data
 
             foreach (var path in filePaths)
             {
-                result.Add(GetNavMenuItem(path));
+                string? folder = Path.GetFileName(Path.GetDirectoryName(path));
+                if (folder != null && folder.EndsWith("WikiPages"))
+                {
+                    folder = null;
+                }
+                result.Add(GetNavMenuItem(path, folder));
             }
 
             return result;
         }
 
 
-        private NavPageMeta GetNavMenuItem(string path)
+        private NavPageMeta GetNavMenuItem(string path, string? folder)
         {
             var fileName = Path.GetFileNameWithoutExtension(path);
-            return new NavPageMeta(CreatePageTitle(fileName), fileName);
+            return new NavPageMeta(CreatePageTitle(fileName), fileName, folder);
         }
 
         internal void LockForEditing(WikiPageModel pageModel, string username)
@@ -128,9 +138,9 @@ namespace Bliki.Data
             return !_editingSessions.Any(s => s.PageModel.Equals(pageModel) && !s.UserName.Equals(username));
         }
 
-        public IList<NavPageMeta> GetCurrentPageHeaders(string pageLink)
+        public IList<NavPageMeta> GetCurrentPageHeaders(string pageLink, string? folder)
         {
-            var pageModel = LoadPage(string.IsNullOrEmpty(pageLink) ? "home" : pageLink);
+            var pageModel = LoadPage(string.IsNullOrEmpty(pageLink) ? "home" : pageLink, folder);
             var result = new List<NavPageMeta>();
             var mdDoc = Markdig.Markdown.Parse(pageModel.Content);
             var tw = new StringWriter();
@@ -142,7 +152,7 @@ namespace Bliki.Data
                     
                     if (content != null)
                     {
-                        result.Add(new NavPageMeta(content, CreatePageLink(content)));
+                        result.Add(new NavPageMeta(content, CreatePageLink(content), null));
                     }
                 }
             }
@@ -151,20 +161,16 @@ namespace Bliki.Data
         }
 
 
-        public WikiPageModel LoadPage(string pageLink)
+        public WikiPageModel LoadPage(string pageLink, string? folder)
         {
-            if (string.IsNullOrEmpty(pageLink))
-            {
-                pageLink = "home";
-            }
-            var filePath = GetFilePath(pageLink);
+            var filePath = GetFilePath(pageLink, folder);
             
             if (File.Exists(filePath))
             {
-                return BuildPageModel(filePath);
+                return BuildPageModel(filePath, folder);
             }
 
-            return new WikiPageModel { Content = "# New Page", PageLink = pageLink, Title = "New Page" };
+            return new WikiPageModel { Content = "# New Page", PageLink = pageLink, Title = "New Page", Folder = folder };
         }
 
         public static void ClearAbandonedEditingSessions()
@@ -173,13 +179,22 @@ namespace Bliki.Data
         }
 
 
-        private string GetFilePath(string pageLink)
+        private string GetFilePath(string pageLink, string? folder)
         {
-            return Path.Combine(_wikiPageDirectory, $"{pageLink}.md");
+            var basePath = _wikiPageDirectory;
+            if (!string.IsNullOrEmpty(folder))
+            {
+                basePath = Path.Combine(_wikiPageDirectory, folder);
+                if (!Directory.Exists(basePath))
+                {
+                    Directory.CreateDirectory(basePath);
+                }
+            }
+            return Path.Combine(basePath, $"{pageLink}.md");
         }
 
 
-        private WikiPageModel BuildPageModel(string filePath)
+        private WikiPageModel BuildPageModel(string filePath, string? folder)
         {
             var title = CreatePageTitle(Path.GetFileNameWithoutExtension(filePath));
             var pageLink = CreatePageLink(title);
@@ -206,13 +221,14 @@ namespace Bliki.Data
             }
 
             content = content.Trim();
-            
+
             var model = new WikiPageModel
             {
                 Content = content,
                 Title = title,
                 SubTitle = subTitle,
-                PageLink = pageLink
+                PageLink = pageLink,
+                Folder = folder
             };
             _loadedPages.Add(model);
 
@@ -246,7 +262,7 @@ namespace Bliki.Data
 
         private void LogException(Exception ex)
         {
-            var exceptionPath = GetFilePath("bliki.exceptions");
+            var exceptionPath = GetFilePath("bliki.exceptions", null);
             File.AppendAllText(exceptionPath, ex.Message);
         }
 
@@ -275,9 +291,9 @@ namespace Bliki.Data
         }
 
 
-        public void DeletePage(string link, string? userName)
+        public void DeletePage(string link, string? userName, string? folder = null)
         {
-            var path = GetFilePath(link);
+            var path = GetFilePath(link, folder);
             if (File.Exists(path))
             {
                 File.Delete(path);

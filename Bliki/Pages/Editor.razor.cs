@@ -1,10 +1,8 @@
 ﻿using Bliki.Components;
 using Bliki.Data;
-using Bliki.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
 using System;
 using System.Security.Principal;
@@ -17,6 +15,8 @@ namespace Bliki.Pages
     {
         [Parameter]
         public string PageLink { get; set; } = "home";
+        [Parameter]
+        public string? Folder { get; set; }
         [Parameter]
         public bool Bold { get; set; }
         [Parameter]
@@ -111,11 +111,11 @@ namespace Bliki.Pages
         {
             if (PageLink == null || PageLink == "new")
             {
-                PageModel = new WikiPageModel { Content = "# New Page", Title = "New Page" };
+                PageModel = new WikiPageModel { Content = "# New Page", Title = "New Page", Folder = Folder };
             }
             else
             {
-                PageModel = _pageManager.LoadPage(PageLink);
+                PageModel = _pageManager.LoadPage(PageLink, Folder);
             }
             StateHasChanged();
         }
@@ -126,7 +126,7 @@ namespace Bliki.Pages
             // Modal.Show("Delete", new ConfirmDeleteForm() { PageLink = PageLink });
             if (PageModel.PageLink != "new-page")
             {
-                _pageManager.DeletePage(PageLink, _userIdentity?.Name);
+                _pageManager.DeletePage(PageLink, _userIdentity?.Name, Folder);
             }
         }
 

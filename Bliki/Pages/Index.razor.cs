@@ -1,9 +1,7 @@
 ﻿using Bliki.Components;
 using Bliki.Data;
-using Bliki.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
@@ -17,7 +15,7 @@ namespace Bliki.Pages
         [Parameter]
         public string? PageLink { get; set; }
         [Parameter]
-        public string? SectionLink { get; set; }
+        public string? Folder { get; set; }
         [Parameter]
         public string SearchTerm { get; set; } = "";
         protected List<NavPageMeta> SearchResults => _pageManager.SearchForPages(SearchTerm.ToLowerInvariant());
@@ -44,7 +42,7 @@ namespace Bliki.Pages
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            PageModel = _pageManager.LoadPage(string.IsNullOrEmpty(PageLink) ? "home" : PageLink);
+            PageModel = _pageManager.LoadPage(string.IsNullOrEmpty(PageLink) ? "home" : PageLink, Folder);
         }
 
 

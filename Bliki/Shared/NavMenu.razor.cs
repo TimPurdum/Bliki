@@ -17,6 +17,7 @@ namespace Bliki.Shared
 
         private bool collapseNavMenu = true;
         protected string _previousUri = "";
+        private string? _previousFolder;
 
         protected IList<NavPageMeta> PageMetas { get; set; } = new List<NavPageMeta>();
         protected IList<NavPageMeta> CurrentPageHeaders { get; set; } = new List<NavPageMeta>();
@@ -60,9 +61,9 @@ namespace Bliki.Shared
 
         private void CheckRoute()
         {
-            var newUri = _navManager
+            var routeParts = _navManager
                         .ToBaseRelativePath(_navManager.Uri)
-                        .Split('/')[0];
+                        .Split('/');
 
             var metaList = _pageManager.GetNavMenuMetas();
             if (!PageMetas.SequenceEqual(metaList))
@@ -71,17 +72,36 @@ namespace Bliki.Shared
                 StateHasChanged();
             }
 
-            if (!newUri.Contains("/") && newUri != _previousUri)
+            string? newFolder = null;
+            string? newUri;
+            if (routeParts.Length > 1 && !string.IsNullOrEmpty(routeParts[1]))
             {
+                newFolder = routeParts[0];
+                newUri = routeParts[1];
+            }
+            else
+            {
+                newUri = routeParts[0];
+            }
+
+            if (newUri != _previousUri || (newFolder != null && newFolder != _previousFolder))
+            {
+                _previousFolder = newFolder;
                 _previousUri = newUri;
+                
                 var currentHeaders =
-                _pageManager.GetCurrentPageHeaders(newUri);
+                _pageManager.GetCurrentPageHeaders(newUri, newFolder);
                 if (!CurrentPageHeaders.SequenceEqual(currentHeaders))
                 {
                     CurrentPageHeaders = currentHeaders;
                     StateHasChanged();
                 }
             }
+        }
+
+        private void NavigateToSection(string sectionLink)
+        {
+            _navManager.NavigateTo($"{_previousUri}/#{sectionLink}");
         }
     }
 }

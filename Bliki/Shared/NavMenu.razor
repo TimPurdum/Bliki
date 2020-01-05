@@ -14,7 +14,7 @@
         @foreach (var meta in CurrentPageHeaders)
         {
             <li class="nav-item px-3">
-                <a class="nav-link" href="@($"{_previousUri}/{meta.PageLink}")">
+                <a class="nav-link" href="" @onclick="() => NavigateToSection(meta.PageLink)">
                     @(meta.Title)
                 </a>
             </li>
