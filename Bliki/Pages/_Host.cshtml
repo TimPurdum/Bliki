@@ -43,11 +43,14 @@
             element.selectionEnd = end;
         }
 
-        window.focusOnElement = (elementId, start, end) => {
-            var element = document.getElementById(elementId);
+        window.focusOnElement = (element, start, end) => {
             element.focus();
-            element.selectionStart = start;
-            element.selectionEnd = end;
+            if (start !== null) {
+                element.selectionStart = start;
+            }
+            if (end !== null) {
+                element.selectionEnd = end;
+            }
         }
 
         document.onkeydown = (e) => {

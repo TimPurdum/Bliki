@@ -14,7 +14,7 @@
         @foreach (var meta in CurrentPageHeaders)
         {
             <li class="nav-item px-3">
-                <a class="nav-link" href="" @onclick="() => NavigateToSection(meta.PageLink)">
+                <a class="nav-link" @onclick="() => NavigateToSection(meta.PageLink)">
                     @(meta.Title)
                 </a>
             </li>
@@ -25,11 +25,20 @@
     <ul class="nav flex-column">
         @foreach (var meta in PageMetas)
         {
-            <li class="nav-item px-3">
+        <li class="nav-item px-3">
+            @if (string.IsNullOrEmpty(meta.Folder))
+            {
                 <NavLink class="nav-link" href="@($"/{meta.PageLink}")">
                     @(meta.Title)
                 </NavLink>
-            </li>
+            }
+            else
+            {
+                <NavLink class="nav-link" href="@($"{meta.Folder}/{meta.PageLink}")">
+                    - @(meta.Title)
+                </NavLink>
+            }
+        </li>
         }
     </ul>
 </div>

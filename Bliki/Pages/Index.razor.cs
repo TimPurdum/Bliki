@@ -18,8 +18,9 @@ namespace Bliki.Pages
         public string? Folder { get; set; }
         [Parameter]
         public string SearchTerm { get; set; } = "";
-        protected List<NavPageMeta> SearchResults => _pageManager.SearchForPages(SearchTerm.ToLowerInvariant());
-            
+        protected List<NavPageMeta> SearchResults =>
+            _pageManager.SearchForPages(SearchTerm.ToLowerInvariant());
+
         [Inject]
         private PageManager _pageManager { get; set; } = default!;
         [Inject]
@@ -50,7 +51,8 @@ namespace Bliki.Pages
         {
             try
             {
-                if (string.IsNullOrEmpty(PageLink))
+                if (string.IsNullOrEmpty(PageLink) ||
+                    !_pageManager.PageExists(PageLink, Folder))
                 {
                     _navManager.NavigateTo(string.IsNullOrEmpty(_previousPageLink) ? "/home" : _previousPageLink, true);
                     return;
@@ -76,7 +78,7 @@ namespace Bliki.Pages
                 if (_pageManager.CanEdit(PageModel, username))
                 {
                     _pageManager.LockForEditing(PageModel, username);
-                    _navManager.NavigateTo($"editor/{PageLink ?? "home"}");
+                    _navManager.NavigateTo($"editor/{(string.IsNullOrEmpty(Folder) ? "": Folder + "/")}{PageLink ?? "home"}");
                 }
                 else
                 {
@@ -89,6 +91,11 @@ Please try again later.");
             {
                 Modal.Show("Can't Edit", "User Session is Invalid! Please log in again.");
             }
+        }
+
+        private void NewPage()
+        {
+            Modal.Show("New Page", typeof(NewPage));
         }
 
         private void ScrollToElementId(string elementId)

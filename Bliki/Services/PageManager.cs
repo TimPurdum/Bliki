@@ -94,7 +94,18 @@ namespace Bliki.Data
 
         public IList<NavPageMeta> GetNavMenuMetas()
         {
-            var filePaths = Directory.GetFiles(_wikiPageDirectory);
+            var folders = Directory.GetDirectories(_wikiPageDirectory);
+            var filePaths = Directory.GetFiles(_wikiPageDirectory).ToList();
+            foreach (var folder in folders)
+            {
+                if (filePaths.Any(fp => fp.Contains(folder)))
+                {
+                    var parentFile = filePaths.First(fp => fp.Contains(folder));
+                    var subFiles = Directory.GetFiles(folder);
+                    var index = filePaths.IndexOf(parentFile);
+                    filePaths.InsertRange(index + 1, subFiles);
+                }
+            }
             var result = new List<NavPageMeta>();
 
             foreach (var path in filePaths)
@@ -160,6 +171,12 @@ namespace Bliki.Data
             return result;
         }
 
+        public bool PageExists(string pageLink, string? folder)
+        {
+            var filePath = GetFilePath(pageLink, folder);
+            return File.Exists(filePath);
+        }
+
 
         public WikiPageModel LoadPage(string pageLink, string? folder)
         {
@@ -170,7 +187,7 @@ namespace Bliki.Data
                 return BuildPageModel(filePath, folder);
             }
 
-            return new WikiPageModel { Content = "# New Page", PageLink = pageLink, Title = "New Page", Folder = folder };
+            return new WikiPageModel { Content = "# New Page", PageLink = pageLink, Title = CreatePageTitle(pageLink), Folder = folder };
         }
 
         public static void ClearAbandonedEditingSessions()

@@ -1,0 +1,40 @@
+﻿@inject NavigationManager  _navManager
+@inject ModalService  _modalService
+@inject IJSRuntime _jsRuntime
+<p>/ <input type="text" @ref="NewPageInput" autofocus @bind-value="@NewPagePath" @bind-value:event="oninput" @onkeydown="KeyDown" /></p>
+<input type="submit" @onclick="CreatePage" />
+@code {      
+    [Parameter]
+    public string NewPagePath { get; set; } = "";
+    private ElementReference NewPageInput { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            var folder = _navManager.Uri.Split('/').Last();
+            var newPath = folder == "home" ? "new-page" : $"{folder}/new-page";
+            if (newPath != NewPagePath)
+            {
+                NewPagePath = newPath;
+                StateHasChanged();
+            }
+            await NewPageInput.Focus(_jsRuntime, 0, NewPagePath.Length);
+        }
+    }
+
+    private void CreatePage()
+    {
+        _modalService.Close();
+        _navManager.NavigateTo($"editor/{NewPagePath}");
+    }
+
+    private void KeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            CreatePage();
+        }
+    }
+}

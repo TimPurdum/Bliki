@@ -9,7 +9,7 @@ namespace Bliki.Components
 
 		protected bool IsVisible { get; set; }
 		protected string? Title { get; set; }
-		protected object? Content { get; set; }
+		protected RenderFragment? Content { get; set; }
 
 		protected override void OnInitialized()
 		{
@@ -18,7 +18,7 @@ namespace Bliki.Components
 			ModalService.OnClose += CloseModal;
 		}
 
-		public void ShowModal(string title, object content)
+		public void ShowModal(string title, RenderFragment content)
 		{
 			Title = title;
 			Content = content;

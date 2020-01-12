@@ -14,16 +14,16 @@
         </div>
     </div>
     <div style="position: absolute; right: 6px; display: flex">
-        <a href="" class="nav-link" @onclick="Save">
+        <a class="nav-link" @onclick="Save">
             <span class="oi oi-check" aria-hidden="true"></span> Save
         </a>
-        <a href="" class="nav-link" @onclick="Cancel">
+        <a class="nav-link" @onclick="Cancel">
             <span class="oi oi-x" aria-hidden="true"></span> Cancel
         </a>
-        <a href="" class="nav-link" @onclick="Delete">
+        <a class="nav-link" @onclick="Delete">
             <span class="oi" data-glyph="trash"></span> Delete
         </a>
-        <a href="" class="nav-link" @onclick="GitHistory">
+        <a class="nav-link" @onclick="GitHistory">
             <span class="oi" data-glyph="trash"></span> Git History
         </a>
     </div>
@@ -31,7 +31,7 @@
 </div>
 
 <div class="content px-4" style="position: fixed; top: 80px; bottom: 6px; left: 254px; right: 4px;">
-    <textarea id="editor-text-area" style="width: 48%; position: absolute; top: 45px; left: 2px; bottom: 6px;"
+    <textarea id="editor-text-area" @ref="EditorElement" style="width: 48%; position: absolute; top: 45px; left: 2px; bottom: 6px;"
               @bind-value="PageModel.Content" @bind-value:event="oninput" 
               @onkeydown="OnKeyDown" @onfocus="OnFocus" />
     <div style="width: 48%; position: absolute; right: 2px; top: 0; bottom: 6px; overflow-y: scroll; overflow-x: hidden; word-wrap: normal;">

@@ -8,6 +8,16 @@ a, .btn-link {
     color: #0366d6;
 }
 
+a:not([href]):not([tabindex]) {
+    color: #007bff;
+    cursor: default;
+}
+
+a:not([href]):not([tabindex]):hover {
+    color: #0366d6;
+    cursor: default;
+}
+
 .top-row h1 {
     font-size: 28px;
     color: #3f51b5;
@@ -27,7 +37,6 @@ a, .btn-link {
     font-weight: 600;
     margin: 12px;
 }
-
 
 .render h1 {
     background-color: #eceff1;

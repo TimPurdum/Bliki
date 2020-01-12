@@ -53,6 +53,7 @@ namespace Bliki.Pages
         protected Toolbar? Toolbar { get; set; }
         [Inject]
         private AuthenticationStateProvider _authenticationStateProvider { get; set; } = default!;
+        private ElementReference EditorElement { get; set; }
 
 
         protected override async Task OnInitializedAsync()
@@ -89,20 +90,26 @@ namespace Bliki.Pages
         {
             _pageManager.SavePage(PageModel, _userIdentity?.Name);
 
-            _navManager.NavigateTo($"/{PageModel.PageLink}");
+            CloseEditor();
         }
 
 
         protected void Cancel()
         {
             _pageManager.Cancel(PageModel);
-            if (PageModel.PageLink != "new-page")
+            CloseEditor();
+        }
+
+
+        private void CloseEditor()
+        {
+            if (string.IsNullOrEmpty(PageModel.Folder))
             {
                 _navManager.NavigateTo($"/{PageModel.PageLink}");
             }
             else
             {
-                _navManager.NavigateTo("/");
+                _navManager.NavigateTo($"/{PageModel.Folder}/{PageModel.PageLink}");
             }
         }
 
@@ -123,13 +130,19 @@ namespace Bliki.Pages
 
         protected void Delete()
         {
-            // Modal.Show("Delete", new ConfirmDeleteForm() { PageLink = PageLink });
-            if (PageModel.PageLink != "new-page")
+            Modal.OnClose += Modal_OnClose;
+            Modal.Show("Delete", typeof(ConfirmDeleteForm), PageLink);
+        }
+
+        private void Modal_OnClose()
+        {
+            if (Modal.Success)
             {
                 _pageManager.DeletePage(PageLink, _userIdentity?.Name, Folder);
             }
+            Modal.OnClose -= Modal_OnClose;
+            CloseEditor();
         }
-
 
         protected async void OnKeyDown(KeyboardEventArgs e)
         {
@@ -192,7 +205,7 @@ namespace Bliki.Pages
         protected async void OnToolbarButtonClicked(ToolbarButton button)
         {
             await ApplyStyling(button);
-            await FocusOnEditor();
+            await EditorElement.Focus(_jsRuntime, _selectionStart, _selectionEnd);
         }
 
 
@@ -355,11 +368,6 @@ namespace Bliki.Pages
             await _jsRuntime.InvokeVoidAsync("resetCursorPosition", new object[] { "editor-text-area", _selectionStart + offset, _selectionEnd + offset });
         }
 
-
-        private async Task FocusOnEditor()
-        {
-            await _jsRuntime.InvokeVoidAsync("focusOnElement", new object[] { "editor-text-area", _selectionStart, _selectionEnd });
-        }
 
         private int _selectionStart;
         private int _selectionEnd;
