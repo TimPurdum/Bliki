@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Principal;
 using System.Threading.Tasks;
 
@@ -58,9 +59,9 @@ namespace Bliki.Pages
                     return;
                 }
                 var fragment = new Uri(_navManager.Uri).Fragment;
-                if (fragment.StartsWith("#"))
+                if (_navManager.Uri.Contains("#"))
                 {
-                    ScrollToElementId(fragment.Replace("#", ""));
+                    ScrollToElementId(_navManager.Uri.Split("#").Last());
                 }
 
                 _previousPageLink = PageLink;

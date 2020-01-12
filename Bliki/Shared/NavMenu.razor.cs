@@ -83,6 +83,7 @@ namespace Bliki.Shared
             {
                 newUri = routeParts[0];
             }
+            newUri = newUri.Split("#")[0];
 
             if (newUri != _previousUri || (newFolder != null && newFolder != _previousFolder))
             {
@@ -101,7 +102,7 @@ namespace Bliki.Shared
 
         private void NavigateToSection(string sectionLink)
         {
-            _navManager.NavigateTo($"{_previousUri}/#{sectionLink}");
+            _navManager.NavigateTo($"{_previousUri}#{sectionLink}", true);
         }
     }
 }
