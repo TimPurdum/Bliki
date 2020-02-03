@@ -9,6 +9,7 @@ using System.Linq;
 using System.Security.Principal;
 using System.Threading.Tasks;
 
+
 namespace Bliki.Pages
 {
     public partial class Index
@@ -37,14 +38,16 @@ namespace Bliki.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            _userIdentity = (await _authenticationStateProvider.GetAuthenticationStateAsync())?.User?.Identity;
+            _userIdentity = (await _authenticationStateProvider.GetAuthenticationStateAsync())?.User
+                ?.Identity;
         }
 
 
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            PageModel = _pageManager.LoadPage(string.IsNullOrEmpty(PageLink) ? "home" : PageLink, Folder);
+            PageModel = _pageManager.LoadPage(string.IsNullOrEmpty(PageLink) ? "home" : PageLink,
+                Folder);
         }
 
 
@@ -55,9 +58,12 @@ namespace Bliki.Pages
                 if (string.IsNullOrEmpty(PageLink) ||
                     !_pageManager.PageExists(PageLink, Folder))
                 {
-                    _navManager.NavigateTo(string.IsNullOrEmpty(_previousPageLink) ? "/home" : _previousPageLink, true);
+                    _navManager.NavigateTo(
+                        string.IsNullOrEmpty(_previousPageLink) ? "/home" : _previousPageLink,
+                        true);
                     return;
                 }
+
                 var fragment = new Uri(_navManager.Uri).Fragment;
                 if (_navManager.Uri.Contains("#"))
                 {
@@ -72,6 +78,7 @@ namespace Bliki.Pages
             }
         }
 
+
         private void OpenEditor()
         {
             if (_userIdentity?.Name is string username)
@@ -79,7 +86,8 @@ namespace Bliki.Pages
                 if (_pageManager.CanEdit(PageModel, username))
                 {
                     _pageManager.LockForEditing(PageModel, username);
-                    _navManager.NavigateTo($"editor/{(string.IsNullOrEmpty(Folder) ? "": Folder + "/")}{PageLink ?? "home"}");
+                    _navManager.NavigateTo(
+                        $"editor/{(string.IsNullOrEmpty(Folder) ? "" : Folder + "/")}{PageLink ?? "home"}");
                 }
                 else
                 {
@@ -94,26 +102,38 @@ Please try again later.");
             }
         }
 
+
         private void NewPage()
         {
             Modal.Show("New Page", typeof(NewPage));
         }
+
 
         private void ScrollToElementId(string elementId)
         {
             Task.Run(async () =>
             {
                 await _jsRuntime
-                .InvokeVoidAsync("scrollToElementId", new[] { elementId });
+                    .InvokeVoidAsync("scrollToElementId", elementId);
             });
         }
 
-        private string _previousPageLink = "";
-        private IIdentity? _userIdentity;
 
         private void ClearSearch()
         {
             SearchTerm = "";
         }
+
+        private void ToggleDarkMode(ChangeEventArgs args)
+        {
+            Task.Run(async () =>
+            {
+                await _jsRuntime.InvokeVoidAsync("toggleDarkMode", args.Value);
+
+            });
+        }
+
+        private string _previousPageLink = "";
+        private IIdentity? _userIdentity;
     }
 }

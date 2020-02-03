@@ -1,6 +1,7 @@
 ﻿using Bliki.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+
 namespace Bliki.Test
 {
     [TestClass]
@@ -18,9 +19,11 @@ namespace Bliki.Test
                 var result = editManager.ToggleMarker(marker, "Hello with some bold text!", 16, 20);
 
                 // Assert
-                Assert.AreEqual($"Hello with some {marker.Value}bold{marker.Value} text!", result.Content);
+                Assert.AreEqual($"Hello with some {marker.Value}bold{marker.Value} text!",
+                    result.Content);
             }
         }
+
 
         [TestMethod]
         public void AddInlineMarkerFailsIfAlreadySet()
@@ -31,10 +34,13 @@ namespace Bliki.Test
             foreach (var marker in _inlineMarkers)
             {
                 // Act
-                var result = editManager.ToggleMarker(marker, $"{marker.Value}Hello with some bold text!{marker.Value}", 18, 22);
+                var result = editManager.ToggleMarker(marker,
+                    $"{marker.Value}Hello with some bold text!{marker.Value}", 18, 22);
 
                 // Assert
-                Assert.AreNotEqual($"{marker.Value}Hello with some {marker.Value}bold{marker.Value} text!{marker.Value}", result.Content);
+                Assert.AreNotEqual(
+                    $"{marker.Value}Hello with some {marker.Value}bold{marker.Value} text!{marker.Value}",
+                    result.Content);
                 Assert.AreEqual("Hello with some bold text!", result.Content);
             }
         }
@@ -52,8 +58,9 @@ namespace Bliki.Test
 
                 // Act
                 var result = editManager
-                    .ToggleMarker(marker, 
-                    $"Hello with some {marker.Value}bold{marker.Value} text!", 16 + offset, 20 + offset);
+                    .ToggleMarker(marker,
+                        $"Hello with some {marker.Value}bold{marker.Value} text!", 16 + offset,
+                        20 + offset);
 
                 // Assert
                 Assert.AreEqual("Hello with some bold text!", result.Content);
@@ -73,8 +80,9 @@ namespace Bliki.Test
 
                 // Act
                 var result = editManager
-                    .ToggleMarker(marker, 
-                    $"{marker.Value}Hello with some bold text!{marker.Value}", 16 + offset , 16 + offset);
+                    .ToggleMarker(marker,
+                        $"{marker.Value}Hello with some bold text!{marker.Value}", 16 + offset,
+                        16 + offset);
 
                 // Assert
                 Assert.AreEqual("Hello with some bold text!", result.Content);
@@ -94,8 +102,9 @@ namespace Bliki.Test
 
                 // Act
                 var result = editManager
-                    .ToggleMarker(marker, 
-                    $"Hello with some {marker.Value}bold{marker.Value} text!", 0, 26 + (offset * 2));
+                    .ToggleMarker(marker,
+                        $"Hello with some {marker.Value}bold{marker.Value} text!", 0,
+                        26 + offset * 2);
 
                 // Assert
                 Assert.AreEqual("Hello with some bold text!", result.Content);
@@ -115,8 +124,8 @@ namespace Bliki.Test
 
                 // Act
                 var result = editManager
-                    .ToggleMarker(marker, 
-                    $"Hello with some {marker.Value}bold text!", 0, 26 + offset);
+                    .ToggleMarker(marker,
+                        $"Hello with some {marker.Value}bold text!", 0, 26 + offset);
 
                 // Assert
                 Assert.AreEqual("Hello with some bold text!", result.Content);
@@ -136,11 +145,14 @@ namespace Bliki.Test
 
                 // Act
                 var result = editManager
-                    .ToggleMarker(marker, 
-                    $"{marker.Value}Hello{marker.Value} with some bold text!", 16 + (offset * 2), 20 + (offset * 2));
+                    .ToggleMarker(marker,
+                        $"{marker.Value}Hello{marker.Value} with some bold text!", 16 + offset * 2,
+                        20 + offset * 2);
 
                 // Assert
-                Assert.AreEqual($"{marker.Value}Hello{marker.Value} with some {marker.Value}bold{marker.Value} text!", result.Content);
+                Assert.AreEqual(
+                    $"{marker.Value}Hello{marker.Value} with some {marker.Value}bold{marker.Value} text!",
+                    result.Content);
             }
         }
 
@@ -157,16 +169,19 @@ namespace Bliki.Test
 
                 // Act
                 var result = editManager
-                    .ToggleMarker(marker, 
-                    $"{marker.Value}Hello with some bold text!{marker.Value}", 26 + offset, 26 + offset);
+                    .ToggleMarker(marker,
+                        $"{marker.Value}Hello with some bold text!{marker.Value}", 26 + offset,
+                        26 + offset);
 
                 // Assert
-                Assert.AreEqual($"{marker.Value}Hello with some bold text!{marker.Value}", result.Content);
+                Assert.AreEqual($"{marker.Value}Hello with some bold text!{marker.Value}",
+                    result.Content);
                 Assert.AreEqual(offset, result.Offset);
             }
         }
 
-        private TextMarker[] _inlineMarkers =
+
+        private readonly TextMarker[] _inlineMarkers =
         {
             TextMarkers.Bold, TextMarkers.Italic, TextMarkers.Strikethrough, TextMarkers.InlineCode
         };

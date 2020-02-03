@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 
+
 namespace Bliki.Interfaces
 {
     public interface IGitManager

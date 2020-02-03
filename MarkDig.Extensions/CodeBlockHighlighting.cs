@@ -3,6 +3,7 @@ using Markdig.Renderers;
 using Markdig.Renderers.Html;
 using Markdig.Syntax;
 
+
 namespace MarkDig.Extensions
 {
     public class CodeBlockHighlighting : IMarkdownExtension
@@ -11,13 +12,16 @@ namespace MarkDig.Extensions
         {
         }
 
+
         public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
         {
-            renderer.ObjectRenderers.ReplaceOrAdd<CodeBlockRenderer>(new CodeBlockHighlightingRenderer());
+            renderer.ObjectRenderers.ReplaceOrAdd<CodeBlockRenderer>(
+                new CodeBlockHighlightingRenderer());
         }
     }
 
-    public class CodeBlockHighlightingRenderer: CodeBlockRenderer
+
+    public class CodeBlockHighlightingRenderer : CodeBlockRenderer
     {
         protected override void Write(HtmlRenderer renderer, CodeBlock obj)
         {

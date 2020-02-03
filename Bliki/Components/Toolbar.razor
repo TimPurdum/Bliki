@@ -1,52 +1,52 @@
 ﻿<div class="toolbar" style="@Style">
-    <button class="btn btn-sm toolbar-btn@(Bold ? "-selected": "")"
-       @onclick="() => Click(ToolbarButton.Bold)">
+    <button class="btn btn-sm toolbar-btn@(Bold ? "-selected" : "")"
+            @onclick="() => Click(ToolbarButton.Bold)">
         <span class="oi oi-bold"></span>
         <span class="tooltip">Bold</span>
     </button>
-    <button class="btn btn-sm toolbar-btn@(Italic ? "-selected": "")"
-       @onclick="() => Click(ToolbarButton.Italic)">
+    <button class="btn btn-sm toolbar-btn@(Italic ? "-selected" : "")"
+            @onclick="() => Click(ToolbarButton.Italic)">
         <span class="oi oi-italic"></span>
         <span class="tooltip">Italic</span>
     </button>
-    <button class="btn btn-sm toolbar-btn@(Strikethrough ? "-selected": "")"
-       @onclick="() => Click(ToolbarButton.Strikethrough)">
+    <button class="btn btn-sm toolbar-btn@(Strikethrough ? "-selected" : "")"
+            @onclick="() => Click(ToolbarButton.Strikethrough)">
         <span id="strikethrough">S</span>
         <span class="tooltip">Strikethrough</span>
     </button>
-    <button class="btn btn-sm toolbar-btn@(Header1 ? "-selected": "")"
-       @onclick="() => Click(ToolbarButton.Header1)">
+    <button class="btn btn-sm toolbar-btn@(Header1 ? "-selected" : "")"
+            @onclick="() => Click(ToolbarButton.Header1)">
         <span class="oi oi-header">1</span>
         <span class="tooltip">Header 1</span>
     </button>
-    <button class="btn btn-sm toolbar-btn@(Header2 ? "-selected": "")"
-       @onclick="() => Click(ToolbarButton.Header2)">
+    <button class="btn btn-sm toolbar-btn@(Header2 ? "-selected" : "")"
+            @onclick="() => Click(ToolbarButton.Header2)">
         <span class="oi oi-header">2</span>
         <span class="tooltip">Header 2</span>
     </button>
-    <button class="btn btn-sm toolbar-btn@(Header3 ? "-selected": "")"
-       @onclick="() => Click(ToolbarButton.Header3)">
+    <button class="btn btn-sm toolbar-btn@(Header3 ? "-selected" : "")"
+            @onclick="() => Click(ToolbarButton.Header3)">
         <span class="oi oi-header">3</span>
         <span class="tooltip">Header 3</span>
     </button>
-    <button class="btn btn-sm toolbar-btn@(InlineCode ? "-selected": "")"
-       @onclick="() => Click(ToolbarButton.InlineCode)">
+    <button class="btn btn-sm toolbar-btn@(InlineCode ? "-selected" : "")"
+            @onclick="() => Click(ToolbarButton.InlineCode)">
         <span>&lt;&gt;</span>
         <span class="tooltip">Inline Code</span>
     </button>
-    <button class="btn btn-sm toolbar-btn@(CodeBlock ? "-selected": "")"
-       @onclick="() => Click(ToolbarButton.CodeBlock)">
+    <button class="btn btn-sm toolbar-btn@(CodeBlock ? "-selected" : "")"
+            @onclick="() => Click(ToolbarButton.CodeBlock)">
         <span class="oi oi-code"></span>
         <span class="tooltip">Code Block</span>
     </button>
-    <button class="btn btn-sm toolbar-btn@(BulletList ? "-selected": "")"
-       @onclick="() => Click(ToolbarButton.BulletList)">
+    <button class="btn btn-sm toolbar-btn@(BulletList ? "-selected" : "")"
+            @onclick="() => Click(ToolbarButton.BulletList)">
         <span class="oi oi-list-rich"></span>
         <span class="tooltip">Bullet List</span>
     </button>
-    <button class="btn btn-sm toolbar-btn@(NumberedList ? "-selected": "")"
-       @onclick="() => Click(ToolbarButton.NumberedList)">
-        <img src="/Images/numberedList.png" width="18" />
+    <button class="btn btn-sm toolbar-btn@(NumberedList ? "-selected" : "")"
+            @onclick="() => Click(ToolbarButton.NumberedList)">
+        <img src="/Images/numberedList.png" width="18"/>
         <span class="tooltip">Numbered List</span>
     </button>
 </div>
@@ -77,8 +77,11 @@
     [Parameter]
     public EventCallback<ToolbarButton> ButtonClick { get; set; }
 
+
     private async void Click(ToolbarButton btn)
     {
         await ButtonClick.InvokeAsync(btn);
     }
+
+
 }

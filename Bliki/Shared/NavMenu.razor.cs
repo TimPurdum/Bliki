@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+
 namespace Bliki.Shared
 {
     public partial class NavMenu
@@ -14,15 +15,11 @@ namespace Bliki.Shared
         [Inject]
         protected NavigationManager _navManager { get; set; } = default!;
 
-
-        private bool collapseNavMenu = true;
-        protected string _previousUri = "";
-        private string? _previousFolder;
-
         protected IList<NavPageMeta> PageMetas { get; set; } = new List<NavPageMeta>();
         protected IList<NavPageMeta> CurrentPageHeaders { get; set; } = new List<NavPageMeta>();
 
         protected string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
 
         protected void ToggleNavMenu()
         {
@@ -36,11 +33,13 @@ namespace Bliki.Shared
             _navManager.LocationChanged += _navManager_LocationChanged;
         }
 
-        private void _navManager_LocationChanged(object? sender, 
+
+        private void _navManager_LocationChanged(object? sender,
             LocationChangedEventArgs e)
         {
             CheckRoute();
         }
+
 
         protected override void OnAfterRender(bool firstRender)
         {
@@ -62,8 +61,8 @@ namespace Bliki.Shared
         private void CheckRoute()
         {
             var routeParts = _navManager
-                        .ToBaseRelativePath(_navManager.Uri)
-                        .Split('/');
+                .ToBaseRelativePath(_navManager.Uri)
+                .Split('/');
 
             var metaList = _pageManager.GetNavMenuMetas();
             if (!PageMetas.SequenceEqual(metaList))
@@ -83,15 +82,16 @@ namespace Bliki.Shared
             {
                 newUri = routeParts[0];
             }
+
             newUri = newUri.Split("#")[0];
 
-            if (newUri != _previousUri || (newFolder != null && newFolder != _previousFolder))
+            if (newUri != _previousUri || newFolder != null && newFolder != _previousFolder)
             {
                 _previousFolder = newFolder;
                 _previousUri = newUri;
-                
+
                 var currentHeaders =
-                _pageManager.GetCurrentPageHeaders(newUri, newFolder);
+                    _pageManager.GetCurrentPageHeaders(newUri, newFolder);
                 if (!CurrentPageHeaders.SequenceEqual(currentHeaders))
                 {
                     CurrentPageHeaders = currentHeaders;
@@ -100,9 +100,17 @@ namespace Bliki.Shared
             }
         }
 
+
         private void NavigateToSection(string sectionLink)
         {
             _navManager.NavigateTo($"{_previousUri}#{sectionLink}", true);
         }
+
+
+        private string? _previousFolder;
+        protected string _previousUri = "";
+
+
+        private bool collapseNavMenu = true;
     }
 }

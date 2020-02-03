@@ -1,5 +1,6 @@
 ﻿using System;
 
+
 namespace Bliki.Data
 {
     public class EditingSession
@@ -10,6 +11,7 @@ namespace Bliki.Data
             UserName = username;
             CheckedOutTime = DateTime.Now;
         }
+
 
         public WikiPageModel PageModel { get; set; }
         public DateTime CheckedOutTime { get; set; }

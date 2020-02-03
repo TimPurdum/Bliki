@@ -8,6 +8,7 @@
             Offset = offset;
         }
 
+
         public string Content { get; set; }
         public int Offset { get; set; }
     }

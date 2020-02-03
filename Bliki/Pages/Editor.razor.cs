@@ -9,6 +9,7 @@ using System.Security.Principal;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+
 namespace Bliki.Pages
 {
     public partial class Editor
@@ -49,17 +50,19 @@ namespace Bliki.Pages
         private ModalService Modal { get; set; } = default!;
 
         protected WikiPageModel PageModel { get; set; } = new WikiPageModel();
-            
+
         protected Toolbar? Toolbar { get; set; }
         [Inject]
-        private AuthenticationStateProvider _authenticationStateProvider { get; set; } = default!;
+        private AuthenticationStateProvider _authenticationStateProvider { get; } = default!;
         private ElementReference EditorElement { get; set; }
 
 
         protected override async Task OnInitializedAsync()
         {
-            _userIdentity = (await _authenticationStateProvider.GetAuthenticationStateAsync())?.User?.Identity;
+            _userIdentity = (await _authenticationStateProvider.GetAuthenticationStateAsync())?.User
+                ?.Identity;
         }
+
 
         protected override void OnAfterRender(bool firstRender)
         {
@@ -77,6 +80,7 @@ namespace Bliki.Pages
             }
         }
 
+
         private void _editorManager_UpdateContent(object? sender, ChangeEventArgs e)
         {
             if (e.Value is string newVal)
@@ -85,6 +89,7 @@ namespace Bliki.Pages
                 StateHasChanged();
             }
         }
+
 
         protected void Save()
         {
@@ -118,12 +123,14 @@ namespace Bliki.Pages
         {
             if (PageLink == null || PageLink == "new")
             {
-                PageModel = new WikiPageModel { Content = "# New Page", Title = "New Page", Folder = Folder };
+                PageModel = new WikiPageModel
+                    {Content = "# New Page", Title = "New Page", Folder = Folder};
             }
             else
             {
                 PageModel = _pageManager.LoadPage(PageLink, Folder);
             }
+
             StateHasChanged();
         }
 
@@ -134,15 +141,18 @@ namespace Bliki.Pages
             Modal.Show("Delete", typeof(ConfirmDeleteForm), PageLink);
         }
 
+
         private void Modal_OnClose()
         {
             if (Modal.Success)
             {
                 _pageManager.DeletePage(PageLink, _userIdentity?.Name, Folder);
             }
+
             Modal.OnClose -= Modal_OnClose;
             CloseEditor();
         }
+
 
         protected async void OnKeyDown(KeyboardEventArgs e)
         {
@@ -153,18 +163,21 @@ namespace Bliki.Pages
                     {
                         await ApplyStyling(ToolbarButton.Bold);
                     }
+
                     break;
                 case "i":
                     if (e.CtrlKey)
                     {
                         await ApplyStyling(ToolbarButton.Italic);
                     }
+
                     break;
                 case "s":
                     if (e.CtrlKey)
                     {
                         Save();
                     }
+
                     break;
                 case "ArrowUp":
                 case "ArrowLeft":
@@ -187,6 +200,7 @@ namespace Bliki.Pages
                     {
                         StateHasChanged();
                     }
+
                     break;
                 case "Tab":
                     await InsertTab();
@@ -219,19 +233,24 @@ namespace Bliki.Pages
         {
             try
             {
-                var positions = await _jsRuntime.InvokeAsync<int[]>("getCursorPosition", new[] { "editor-text-area" });
+                var positions = await _jsRuntime.InvokeAsync<int[]>("getCursorPosition",
+                    new[] {"editor-text-area"});
                 _selectionStart = positions[0];
                 _selectionEnd = positions[1];
 
-                _beforePosition = _selectionStart > 0 ? PageModel.Content.Substring(0, _selectionStart) : "";
-                _afterPosition = _selectionEnd < PageModel.Content.Length ? PageModel.Content.Substring(_selectionEnd) : "";
+                _beforePosition = _selectionStart > 0
+                    ? PageModel.Content.Substring(0, _selectionStart)
+                    : "";
+                _afterPosition = _selectionEnd < PageModel.Content.Length
+                    ? PageModel.Content.Substring(_selectionEnd)
+                    : "";
 
                 Bold = _boldRegex.Matches(_beforePosition).Count % 2 == 1 &&
-                    _boldRegex.Matches(_afterPosition).Count % 2 == 1;
+                       _boldRegex.Matches(_afterPosition).Count % 2 == 1;
                 Italic = _italicRegex.Matches(_beforePosition).Count % 2 == 1 &&
-                    _italicRegex.Matches(_afterPosition).Count % 2 == 1;
+                         _italicRegex.Matches(_afterPosition).Count % 2 == 1;
                 Strikethrough = _strikethroughRegex.Matches(_beforePosition).Count % 2 == 1 &&
-                    _strikethroughRegex.Matches(_afterPosition).Count % 2 == 1;
+                                _strikethroughRegex.Matches(_afterPosition).Count % 2 == 1;
                 var headerLevel = GetLineHeaderLevel();
                 Header1 = headerLevel == 1;
                 Header2 = headerLevel == 2;
@@ -251,40 +270,45 @@ namespace Bliki.Pages
             try
             {
                 await CheckFormattingPosition();
-                ToggleResult toggleResult = new ToggleResult(PageModel.Content, 0);
+                var toggleResult = new ToggleResult(PageModel.Content, 0);
                 switch (button)
                 {
                     case ToolbarButton.Bold:
                         toggleResult = _editorManager
-                                .ToggleMarker(TextMarkers.Bold, PageModel.Content, _selectionStart, _selectionEnd);
+                            .ToggleMarker(TextMarkers.Bold, PageModel.Content, _selectionStart,
+                                _selectionEnd);
                         break;
                     case ToolbarButton.Italic:
                         toggleResult = _editorManager
-                                .ToggleMarker(TextMarkers.Italic, PageModel.Content, _selectionStart, _selectionEnd);
+                            .ToggleMarker(TextMarkers.Italic, PageModel.Content, _selectionStart,
+                                _selectionEnd);
                         break;
                     case ToolbarButton.Strikethrough:
                         toggleResult = _editorManager
-                                .ToggleMarker(TextMarkers.Italic, PageModel.Content, _selectionStart, _selectionEnd);
+                            .ToggleMarker(TextMarkers.Italic, PageModel.Content, _selectionStart,
+                                _selectionEnd);
                         break;
                     case ToolbarButton.Header1:
                         toggleResult = _editorManager
-                                .ToggleHeader(1, PageModel.Content, _selectionStart);
+                            .ToggleHeader(1, PageModel.Content, _selectionStart);
                         break;
                     case ToolbarButton.Header2:
                         toggleResult = _editorManager
-                                .ToggleHeader(2, PageModel.Content, _selectionStart);
+                            .ToggleHeader(2, PageModel.Content, _selectionStart);
                         break;
                     case ToolbarButton.Header3:
                         toggleResult = _editorManager
-                                .ToggleHeader(3, PageModel.Content, _selectionStart);
+                            .ToggleHeader(3, PageModel.Content, _selectionStart);
                         break;
                     case ToolbarButton.InlineCode:
                         toggleResult = _editorManager
-                            .ToggleMarker(TextMarkers.InlineCode, PageModel.Content, _selectionStart, _selectionEnd);
+                            .ToggleMarker(TextMarkers.InlineCode, PageModel.Content,
+                                _selectionStart, _selectionEnd);
                         break;
                     case ToolbarButton.CodeBlock:
                         toggleResult = _editorManager
-                            .ToggleMarker(TextMarkers.CodeBlock, PageModel.Content, _selectionStart, _selectionEnd);
+                            .ToggleMarker(TextMarkers.CodeBlock, PageModel.Content, _selectionStart,
+                                _selectionEnd);
                         break;
                     case ToolbarButton.NumberedList:
                         toggleResult = _editorManager
@@ -295,6 +319,7 @@ namespace Bliki.Pages
                             .ToggleBulletList(PageModel.Content, _selectionStart);
                         break;
                 }
+
                 PageModel.Content = toggleResult.Content;
                 StateHasChanged();
                 await ResetCursor(toggleResult.Offset);
@@ -310,7 +335,8 @@ namespace Bliki.Pages
         private async Task InsertTab()
         {
             await CheckFormattingPosition();
-            var toggleResult = _editorManager.InsertTab(PageModel.Content, _selectionStart, _selectionEnd);
+            var toggleResult =
+                _editorManager.InsertTab(PageModel.Content, _selectionStart, _selectionEnd);
             PageModel.Content = toggleResult.Content;
             StateHasChanged();
             await ResetCursor(toggleResult.Offset);
@@ -338,6 +364,7 @@ namespace Bliki.Pages
             return _numberedLineRegex.IsMatch(line);
         }
 
+
         private bool LineIsBulleted(int relativeToCursor = 0)
         {
             var line = GetLine(relativeToCursor);
@@ -349,37 +376,44 @@ namespace Bliki.Pages
         {
             _allLines = _lineBreakRegex.Split(PageModel.Content);
             var index = 0;
-            for (int i = 0; i < _allLines.Length; i++)
+            for (var i = 0; i < _allLines.Length; i++)
             {
-                string line = _allLines[i];
+                var line = _allLines[i];
                 index += line.Length + 1;
                 if (index > _selectionStart)
                 {
-                    var returnIndex = (i + relativeToCursor) >= 0 && (i + relativeToCursor) < _allLines.Length - 1 ?
-                        i + relativeToCursor : i;
+                    var returnIndex =
+                        i + relativeToCursor >= 0 && i + relativeToCursor < _allLines.Length - 1
+                            ? i + relativeToCursor
+                            : i;
                     return _allLines[returnIndex];
                 }
             }
+
             return "";
         }
 
+
         private async Task ResetCursor(int offset)
         {
-            await _jsRuntime.InvokeVoidAsync("resetCursorPosition", new object[] { "editor-text-area", _selectionStart + offset, _selectionEnd + offset });
+            await _jsRuntime.InvokeVoidAsync("resetCursorPosition", "editor-text-area",
+                _selectionStart + offset, _selectionEnd + offset);
         }
 
 
-        private int _selectionStart;
-        private int _selectionEnd;
-        private string _beforePosition = "";
-        private string _afterPosition = "";
-        private string[] _allLines = new string[0];
-        private IIdentity? _userIdentity;
         private readonly Regex _boldRegex = new Regex(@"(?:^|[^\*])(\*\*)(?:[^\*]|$)");
+        private readonly Regex _bulletLineRegex = new Regex(@"^[\s]*- ");
         private readonly Regex _italicRegex = new Regex(@"(?:^|[^\*])(\*)(?:[^\*]|$)");
-        private readonly Regex _strikethroughRegex = new Regex(@"(?:^|[^~])(~~)(?:[^~]|$)");
         private readonly Regex _lineBreakRegex = new Regex("\r\n|\r|\n");
         private readonly Regex _numberedLineRegex = new Regex(@"^[\s]*[\d]+\. ");
-        private readonly Regex _bulletLineRegex = new Regex(@"^[\s]*- ");
+        private readonly Regex _strikethroughRegex = new Regex(@"(?:^|[^~])(~~)(?:[^~]|$)");
+        private string _afterPosition = "";
+        private string[] _allLines = new string[0];
+        private string _beforePosition = "";
+        private int _selectionEnd;
+
+
+        private int _selectionStart;
+        private IIdentity? _userIdentity;
     }
 }

@@ -6,8 +6,10 @@
         public static TextMarker Italic = new TextMarker("*", @"(?:^|[^\*])(\*)(?:[^\*]|$)");
         public static TextMarker Strikethrough = new TextMarker("~~", @"(?:^|[^~])(~~)(?:[^~]|$)");
         public static TextMarker InlineCode = new TextMarker("`", @"(?:^|[^`])(`)(?:[^`]|$)");
-        public static TextMarker CodeBlock = new TextMarker($"```", @"(?:^|[^`])(```)(?:[^`]|$)", true);
+        public static TextMarker CodeBlock =
+            new TextMarker("```", @"(?:^|[^`])(```)(?:[^`]|$)", true);
     }
+
 
     public struct TextMarker
     {
@@ -17,6 +19,7 @@
             RegexValue = regexValue;
             IsBlock = isBlock;
         }
+
 
         public string Value { get; }
         public string RegexValue { get; }

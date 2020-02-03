@@ -1,9 +1,12 @@
 ﻿@page
-@using Microsoft.AspNetCore.Identity
 @using Bliki.Data
+@using Microsoft.AspNetCore.Identity
 @attribute [IgnoreAntiforgeryToken]
 @inject SignInManager<BlikiUser> SignInManager
+
 @functions {
+
+
     public async Task<IActionResult> OnPost()
     {
         if (SignInManager.IsSignedIn(User))
@@ -13,4 +16,6 @@
 
         return Redirect("~/");
     }
+
+
 }

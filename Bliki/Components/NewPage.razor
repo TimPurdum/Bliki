@@ -1,12 +1,14 @@
-﻿@inject NavigationManager  _navManager
-@inject ModalService  _modalService
+﻿@inject NavigationManager _navManager
+@inject ModalService _modalService
 @inject IJSRuntime _jsRuntime
-<p>/ <input type="text" @ref="NewPageInput" autofocus @bind-value="@NewPagePath" @bind-value:event="oninput" @onkeydown="KeyDown" /></p>
-<input type="submit" @onclick="CreatePage" />
-@code {      
+<p>/ <input type="text" @ref="NewPageInput" autofocus @bind-value="@NewPagePath" @bind-value:event="oninput" @onkeydown="KeyDown"/></p>
+<input type="submit" @onclick="CreatePage"/>
+
+@code {
     [Parameter]
     public string NewPagePath { get; set; } = "";
     private ElementReference NewPageInput { get; set; }
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -24,11 +26,13 @@
         }
     }
 
+
     private void CreatePage()
     {
         _modalService.Close();
         _navManager.NavigateTo($"editor/{NewPagePath}");
     }
+
 
     private void KeyDown(KeyboardEventArgs e)
     {
@@ -37,4 +41,6 @@
             CreatePage();
         }
     }
+
+
 }

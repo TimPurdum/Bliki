@@ -1,10 +1,10 @@
-﻿@((MarkupString)Markdown.ToHtml(Content, _pipeline))
+﻿@((MarkupString) Markdown.ToHtml(Content, _pipeline))
 
 @code {
     [Parameter]
     public string Content { get; set; } = "";
 
-    private MarkdownPipeline _pipeline = new MarkdownPipelineBuilder()
+    private readonly MarkdownPipeline _pipeline = new MarkdownPipelineBuilder()
         .UseAdvancedExtensions()
         .UseSyntaxHighlighting()
         .UseSoftlineBreakAsHardlineBreak()

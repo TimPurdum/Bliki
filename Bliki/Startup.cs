@@ -1,17 +1,16 @@
+using Bliki.Areas.Identity;
+using Bliki.Components;
+using Bliki.Data;
+using Bliki.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Bliki.Areas.Identity;
-using Bliki.Data;
-using Bliki.Interfaces;
-using Bliki.Components;
-using Microsoft.AspNetCore.HttpOverrides;
-using Bliki.Services;
-using Microsoft.AspNetCore.Identity.UI.Services;
+
 
 namespace Bliki
 {
@@ -22,7 +21,9 @@ namespace Bliki
             Configuration = configuration;
         }
 
+
         public IConfiguration Configuration { get; }
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -35,19 +36,16 @@ namespace Bliki
                 .AddUserManager<BlikiUserManager>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddScoped<AuthenticationStateProvider, 
+            services.AddScoped<AuthenticationStateProvider,
                 RevalidatingIdentityAuthenticationStateProvider<BlikiUser>>();
             services.AddScoped<PageManager>();
             services.AddScoped(typeof(IGitManager), typeof(GitManager));
             services.AddScoped<MarkdownEditorManager>();
             services.AddScoped<ModalService>();
             services.AddHttpContextAccessor();
-            services.AddSingleton<IEmailConfiguration>(Configuration.GetSection("EmailConfiguration")
-                .Get<EmailConfiguration>());
-            services.AddTransient<IEmailService, EmailService>();
-            services.AddTransient<IEmailSender, EmailService>();
             services.AddMvc();
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

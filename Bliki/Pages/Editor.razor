@@ -6,11 +6,11 @@
     <div>
         <div style="display: flex">
             <label>Title:</label>
-            <input @bind="PageModel.Title" />
+            <input @bind="PageModel.Title"/>
         </div>
         <div style="display: flex">
             <label>SubTitle:</label>
-            <input @bind="PageModel.SubTitle" />
+            <input @bind="PageModel.SubTitle"/>
         </div>
     </div>
     <div style="position: absolute; right: 6px; display: flex">
@@ -27,7 +27,7 @@
             <span class="oi" data-glyph="trash"></span> Git History
         </a>
     </div>
-    
+
 </div>
 
 <div class="content px-4" style="position: fixed; top: 80px; bottom: 6px; left: 254px; right: 4px;">
@@ -35,12 +35,12 @@
               @bind-value="PageModel.Content" @bind-value:event="oninput" 
               @onkeydown="OnKeyDown" @onfocus="OnFocus" />
     <div style="width: 48%; position: absolute; right: 2px; top: 0; bottom: 6px; overflow-y: scroll; overflow-x: hidden; word-wrap: normal;">
-        <MarkdownRenderer Content="@PageModel.Content" />
+        <MarkdownRenderer Content="@PageModel.Content"/>
     </div>
     <Toolbar @ref="Toolbar" Bold="@Bold" Italic="@Italic" Strikethrough="@Strikethrough"
-             Header1="@Header1" Header2="@Header2" Header3="@Header3"
-             NumberedList="@NumberedList" BulletList="@BulletList"
-             InlineCode="@InlineCode" CodeBlock="@CodeBlock"
-             Style="position: absolute; top: 6px; left: 2px;" 
-             ButtonClick="OnToolbarButtonClicked" />
+              Header1="@Header1" Header2="@Header2" Header3="@Header3"
+              NumberedList="@NumberedList" BulletList="@BulletList"
+              InlineCode="@InlineCode" CodeBlock="@CodeBlock"
+              Style="position: absolute; top: 6px; left: 2px;"
+              ButtonClick="OnToolbarButtonClicked"/>
 </div>

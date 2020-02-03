@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
+
 namespace Bliki.Data
 {
     public class MarkdownEditorManager
@@ -19,7 +20,7 @@ namespace Bliki.Data
                 line = line.Remove(0, 1);
                 originalLevel++;
             }
-            
+
             line = line.TrimStart();
 
             if (originalLevel != level)
@@ -28,12 +29,13 @@ namespace Bliki.Data
                 {
                     line = line.Insert(0, "#");
                 }
+
                 if (level > 0)
                 {
                     line = line.Insert(level, " ");
                 }
             }
-            
+
 
             content = content.Remove(lineIndex, originalLength);
             content = content.Insert(lineIndex, line);
@@ -45,14 +47,16 @@ namespace Bliki.Data
         {
             var before = start > 0 ? content.Substring(0, start) : "";
             var after = end < content.Length ? content.Substring(end, content.Length - end) : "";
-            var selected = start >= 0 && end <= content.Length ? content.Substring(start, end - start) : content;
+            var selected = start >= 0 && end <= content.Length
+                ? content.Substring(start, end - start)
+                : content;
             if (!marker.IsBlock)
             {
                 var lineTuple = GetLineAndIndex(content, start);
                 before = before.Substring(lineTuple.Item2);
-                after = end > lineTuple.Item2 + lineTuple.Item1.Length ?
-                    content.Substring(end, lineTuple.Item1.Length - (end - lineTuple.Item2)) :
-                    after;
+                after = end > lineTuple.Item2 + lineTuple.Item1.Length
+                    ? content.Substring(end, lineTuple.Item1.Length - (end - lineTuple.Item2))
+                    : after;
             }
 
             var regex = new Regex(marker.RegexValue, RegexOptions.Multiline);
@@ -73,6 +77,7 @@ namespace Bliki.Data
                 var firstAfterPosition = after.IndexOf(marker.Value) + end;
                 content = content.Remove(firstAfterPosition, marker.Value.Length);
             }
+
             if (regex.Matches(before).Count % 2 == 1)
             {
                 markersFound++;
@@ -97,32 +102,14 @@ namespace Bliki.Data
             if (markersFound == 0)
             {
                 offset = marker.Value.Length + (marker.IsBlock ? 1 : 0);
-                content = content.Insert(end, marker.Value + (marker.IsBlock ? Environment.NewLine : ""));
-                content = content.Insert(start, (marker.IsBlock ? Environment.NewLine : "") + marker.Value);
+                content = content.Insert(end,
+                    marker.Value + (marker.IsBlock ? Environment.NewLine : ""));
+                content = content.Insert(start,
+                    (marker.IsBlock ? Environment.NewLine : "") + marker.Value);
             }
 
             return new ToggleResult(content, offset);
         }
-
-
-        private Tuple<string, int> GetLineAndIndex(string content, int start)
-        {
-            var allLines = _lineBreakRegex.Split(content);
-            var index = 0;
-            foreach (var line in allLines)
-            {
-                var lineIndex = index;
-                index += line.Length + 1;
-                if (index > start)
-                {
-                    return new Tuple<string, int>(line, lineIndex);
-                }
-            }
-            return new Tuple<string, int>("", 0);
-        }
-
-
-        private readonly Regex _lineBreakRegex = new Regex("\r\n|\r|\n");
 
 
         public ToggleResult ToggleNumberedList(string content, int start)
@@ -135,7 +122,7 @@ namespace Bliki.Data
                 line = line.Remove(0, 1);
                 originalIndent++;
             }
-            
+
             var intRgx = new Regex(@"^([\d]+\. )");
             var match = intRgx.Match(line);
             var offset = 0;
@@ -161,18 +148,22 @@ namespace Bliki.Data
                 content = content.Insert(lineIndex + originalIndent, insert);
                 offset = insert.Length;
             }
-            
+
             return new ToggleResult(content, offset);
         }
 
+
         public ToggleResult InsertTab(string content, int start, int end)
         {
-            var selected = start >= 0 && end <= content.Length ? content.Substring(start, end - start) : content;
+            var selected = start >= 0 && end <= content.Length
+                ? content.Substring(start, end - start)
+                : content;
             content = content.Remove(start, selected.Length);
             content = content.Insert(start, "    ");
 
             return new ToggleResult(content, 4 - selected.Length);
         }
+
 
         public ToggleResult ToggleBulletList(string content, int start)
         {
@@ -184,7 +175,7 @@ namespace Bliki.Data
                 line = line.Remove(0, 1);
                 originalIndent++;
             }
-            
+
             var offset = 0;
             if (line.StartsWith("- "))
             {
@@ -198,8 +189,29 @@ namespace Bliki.Data
                 content = content.Insert(lineIndex + originalIndent, "- ");
                 offset = 2;
             }
-            
+
             return new ToggleResult(content, offset);
         }
+
+
+        private Tuple<string, int> GetLineAndIndex(string content, int start)
+        {
+            var allLines = _lineBreakRegex.Split(content);
+            var index = 0;
+            foreach (var line in allLines)
+            {
+                var lineIndex = index;
+                index += line.Length + 1;
+                if (index > start)
+                {
+                    return new Tuple<string, int>(line, lineIndex);
+                }
+            }
+
+            return new Tuple<string, int>("", 0);
+        }
+
+
+        private readonly Regex _lineBreakRegex = new Regex("\r\n|\r|\n");
     }
 }

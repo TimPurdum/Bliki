@@ -5,18 +5,23 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
+
 namespace Bliki
 {
     public class SessionCleaner : IHostedService, IDisposable
     {
-        private readonly ILogger<SessionCleaner> _logger;
-        private Timer? _timer;
-
         public SessionCleaner(ILogger<SessionCleaner> logger,
             PageManager pageManager)
         {
             _logger = logger;
         }
+
+
+        public void Dispose()
+        {
+            _timer?.Dispose();
+        }
+
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
@@ -28,10 +33,6 @@ namespace Bliki
             return Task.CompletedTask;
         }
 
-        private void DoWork(object? state)
-        {
-            PageManager.ClearAbandonedEditingSessions();
-        }
 
         public Task StopAsync(CancellationToken stoppingToken)
         {
@@ -42,9 +43,14 @@ namespace Bliki
             return Task.CompletedTask;
         }
 
-        public void Dispose()
+
+        private void DoWork(object? state)
         {
-            _timer?.Dispose();
+            PageManager.ClearAbandonedEditingSessions();
         }
+
+
+        private readonly ILogger<SessionCleaner> _logger;
+        private Timer? _timer;
     }
 }

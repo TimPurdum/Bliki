@@ -1,4 +1,5 @@
 ﻿using Bliki.Interfaces;
+using Markdig;
 using Markdig.Syntax;
 using System;
 using System.Collections.Generic;
@@ -9,46 +10,24 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 
+
 namespace Bliki.Data
 {
     public class PageManager
     {
-        private readonly IGitManager _gitManager;
-        private static List<EditingSession> _editingSessions 
-            = new List<EditingSession>();
-
         public PageManager(IGitManager gitManager)
         {
             _gitManager = gitManager;
             FindWikiPageDirectory(Directory.GetCurrentDirectory());
         }
 
-        internal List<NavPageMeta> SearchForPages(string searchTerm)
-        {
-            var allPages = Directory.GetFiles(_wikiPageDirectory);
-            var result = new List<NavPageMeta>();
-            foreach (var pagePath in allPages)
-            {
-                var pageMeta = BuildPageModel(pagePath, null);
-                if (pageMeta.Content.Contains(searchTerm))
-                {
-                    string? folder = Path.GetFullPath(Path.GetDirectoryName(pagePath)!);
-                    if (folder != null && folder.EndsWith("WikiPages"))
-                    {
-                        folder = null;
-                    }
-                    result.Add(GetNavMenuItem(pagePath, folder));
-                }
-            }
-
-            return result;
-        }
 
         public PageManager(IGitManager gitManager, string wikiDirectory)
         {
             _gitManager = gitManager;
             _wikiPageDirectory = wikiDirectory;
         }
+
 
         public bool SavePage(WikiPageModel model, string? userName)
         {
@@ -67,30 +46,31 @@ namespace Bliki.Data
 
                 var file = BuildMarkdownFileContent(model);
                 var savePath = GetFilePath(model.PageLink, model.Folder);
-                
+
                 File.WriteAllText(savePath, file);
-                Task.Run(async () =>
-                {
-                    await _gitManager.Commit(model.PageLink, userName);
-                });
-                if (_editingSessions.FirstOrDefault(s => s.PageModel.Equals(model)) is EditingSession session)
+                Task.Run(async () => { await _gitManager.Commit(model.PageLink, userName); });
+                if (_editingSessions.FirstOrDefault(s => s.PageModel.Equals(model)) is
+                    EditingSession session)
                 {
                     _editingSessions.Remove(session);
                 }
+
                 if (_loadedPages.Contains(model))
                 {
                     _loadedPages.Remove(model);
                 }
+
                 _loadedPages.Add(model);
 
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogException(ex);
                 return false;
             }
         }
+
 
         public IList<NavPageMeta> GetNavMenuMetas()
         {
@@ -106,16 +86,105 @@ namespace Bliki.Data
                     filePaths.InsertRange(index + 1, subFiles);
                 }
             }
+
             var result = new List<NavPageMeta>();
 
             foreach (var path in filePaths)
             {
-                string? folder = Path.GetFileName(Path.GetDirectoryName(path));
+                var folder = Path.GetFileName(Path.GetDirectoryName(path));
                 if (folder != null && folder.EndsWith("WikiPages"))
                 {
                     folder = null;
                 }
+
                 result.Add(GetNavMenuItem(path, folder));
+            }
+
+            return result;
+        }
+
+
+        public IList<NavPageMeta> GetCurrentPageHeaders(string pageLink, string? folder)
+        {
+            var pageModel = LoadPage(string.IsNullOrEmpty(pageLink) ? "home" : pageLink, folder);
+            var result = new List<NavPageMeta>();
+            var mdDoc = Markdown.Parse(pageModel.Content);
+            var tw = new StringWriter();
+            foreach (var block in mdDoc)
+            {
+                if (block is HeadingBlock heading)
+                {
+                    var content = heading.Inline.FirstChild.ToString();
+
+                    if (content != null)
+                    {
+                        result.Add(new NavPageMeta(content, CreatePageLink(content), null));
+                    }
+                }
+            }
+
+            return result;
+        }
+
+
+        public bool PageExists(string pageLink, string? folder)
+        {
+            var filePath = GetFilePath(pageLink, folder);
+            return File.Exists(filePath);
+        }
+
+
+        public WikiPageModel LoadPage(string pageLink, string? folder)
+        {
+            var filePath = GetFilePath(pageLink, folder);
+
+            if (File.Exists(filePath))
+            {
+                return BuildPageModel(filePath, folder);
+            }
+
+            return new WikiPageModel
+            {
+                Content = "# New Page", PageLink = pageLink, Title = CreatePageTitle(pageLink),
+                Folder = folder
+            };
+        }
+
+
+        public static void ClearAbandonedEditingSessions()
+        {
+            _editingSessions.RemoveAll(s => s.CheckedOutTime < DateTime.Now.AddMinutes(-10));
+        }
+
+
+        public void DeletePage(string link, string? userName, string? folder = null)
+        {
+            var path = GetFilePath(link, folder);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+                Task.Run(async () => { await _gitManager.Commit(link, userName, true); });
+            }
+        }
+
+
+        internal List<NavPageMeta> SearchForPages(string searchTerm)
+        {
+            var allPages = Directory.GetFiles(_wikiPageDirectory);
+            var result = new List<NavPageMeta>();
+            foreach (var pagePath in allPages)
+            {
+                var pageMeta = BuildPageModel(pagePath, null);
+                if (pageMeta.Content.Contains(searchTerm))
+                {
+                    string? folder = Path.GetFullPath(Path.GetDirectoryName(pagePath)!);
+                    if (folder.EndsWith("WikiPages"))
+                    {
+                        folder = null;
+                    }
+
+                    result.Add(GetNavMenuItem(pagePath, folder));
+                }
             }
 
             return result;
@@ -128,71 +197,31 @@ namespace Bliki.Data
             return new NavPageMeta(CreatePageTitle(fileName), fileName, folder);
         }
 
+
         internal void LockForEditing(WikiPageModel pageModel, string username)
         {
-            if (!_editingSessions.Any(s => s.PageModel.Equals(pageModel) && s.UserName.Equals(username)))
+            if (!_editingSessions.Any(s =>
+                s.PageModel.Equals(pageModel) && s.UserName.Equals(username)))
             {
                 _editingSessions.Add(new EditingSession(pageModel, username));
             }
         }
 
+
         internal void Cancel(WikiPageModel model)
         {
-            if (_editingSessions.FirstOrDefault(s => s.PageModel.Equals(model)) is EditingSession session)
+            if (_editingSessions.FirstOrDefault(s => s.PageModel.Equals(model)) is EditingSession
+                session)
             {
                 _editingSessions.Remove(session);
             }
         }
 
+
         internal bool CanEdit(WikiPageModel pageModel, string username)
         {
-            return !_editingSessions.Any(s => s.PageModel.Equals(pageModel) && !s.UserName.Equals(username));
-        }
-
-        public IList<NavPageMeta> GetCurrentPageHeaders(string pageLink, string? folder)
-        {
-            var pageModel = LoadPage(string.IsNullOrEmpty(pageLink) ? "home" : pageLink, folder);
-            var result = new List<NavPageMeta>();
-            var mdDoc = Markdig.Markdown.Parse(pageModel.Content);
-            var tw = new StringWriter();
-            foreach (var block in mdDoc)
-            {
-                if (block is HeadingBlock heading)
-                {
-                    var content = heading.Inline.FirstChild.ToString();
-                    
-                    if (content != null)
-                    {
-                        result.Add(new NavPageMeta(content, CreatePageLink(content), null));
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        public bool PageExists(string pageLink, string? folder)
-        {
-            var filePath = GetFilePath(pageLink, folder);
-            return File.Exists(filePath);
-        }
-
-
-        public WikiPageModel LoadPage(string pageLink, string? folder)
-        {
-            var filePath = GetFilePath(pageLink, folder);
-            
-            if (File.Exists(filePath))
-            {
-                return BuildPageModel(filePath, folder);
-            }
-
-            return new WikiPageModel { Content = "# New Page", PageLink = pageLink, Title = CreatePageTitle(pageLink), Folder = folder };
-        }
-
-        public static void ClearAbandonedEditingSessions()
-        {
-            _editingSessions.RemoveAll(s => s.CheckedOutTime < DateTime.Now.AddMinutes(-10));
+            return !_editingSessions.Any(s =>
+                s.PageModel.Equals(pageModel) && !s.UserName.Equals(username));
         }
 
 
@@ -207,6 +236,7 @@ namespace Bliki.Data
                     Directory.CreateDirectory(basePath);
                 }
             }
+
             return Path.Combine(basePath, $"{pageLink}.md");
         }
 
@@ -216,18 +246,21 @@ namespace Bliki.Data
             var title = CreatePageTitle(Path.GetFileNameWithoutExtension(filePath));
             var pageLink = CreatePageLink(title);
             var saved = _loadedPages.FirstOrDefault(p => p.PageLink == pageLink);
-            if (saved != null) return saved;
+            if (saved != null)
+            {
+                return saved;
+            }
 
             var content = File.ReadAllText(filePath);
             var titleRgx = new Regex("<!-- TITLE: (.*) -->");
             var titleMatch = titleRgx.Match(content);
-            
-            if (titleMatch.Success) 
+
+            if (titleMatch.Success)
             {
                 title = titleMatch.Result("$1");
                 content = titleRgx.Replace(content, "");
             }
-            
+
             var subTitleRgx = new Regex("<!-- SUBTITLE: (.*) -->");
             var subTitle = "A Special Page";
             var subMatch = subTitleRgx.Match(content);
@@ -266,6 +299,7 @@ namespace Bliki.Data
             var link = title.Replace(' ', '-').ToLowerInvariant();
             return HttpUtility.UrlEncode(link);
         }
+
 
         private string CreatePageTitle(string pageLink)
         {
@@ -308,20 +342,11 @@ namespace Bliki.Data
         }
 
 
-        public void DeletePage(string link, string? userName, string? folder = null)
-        {
-            var path = GetFilePath(link, folder);
-            if (File.Exists(path))
-            {
-                File.Delete(path);
-                Task.Run(async () =>
-                {
-                    await _gitManager.Commit(link, userName, true);
-                });
-            }
-        }
+        private readonly IGitManager _gitManager;
 
         private string _wikiPageDirectory = @"WikiPages";
-        private static List<WikiPageModel> _loadedPages = new List<WikiPageModel>();
+        private static readonly List<EditingSession> _editingSessions
+            = new List<EditingSession>();
+        private static readonly List<WikiPageModel> _loadedPages = new List<WikiPageModel>();
     }
 }

@@ -5,6 +5,7 @@ using Moq;
 using System.IO;
 using System.Linq;
 
+
 namespace Bliki.Test
 {
     [TestClass]
@@ -32,11 +33,11 @@ namespace Bliki.Test
             Assert.IsTrue(result);
             Assert.AreEqual("test-page-1", testPageModel.PageLink);
             Assert.IsTrue(File.Exists(savePath));
-            Assert.AreEqual($@"<!-- TITLE: Test Page 1 -->
+            Assert.AreEqual(@"<!-- TITLE: Test Page 1 -->
 <!-- SUBTITLE: SubTitle Page 1 -->
-This is test content", 
+This is test content",
                 File.ReadAllText(savePath));
-            
+
             // Cleanup
             File.Delete(savePath);
         }
@@ -50,7 +51,7 @@ This is test content",
             var manager = new PageManager(gitMock.Object, @"..\..\..\WikiPages");
 
             var savePath = @"..\..\..\WikiPages\test-page-2.md";
-            var content = $@"<!-- TITLE: Test Page 2 -->
+            var content = @"<!-- TITLE: Test Page 2 -->
 <!-- SUBTITLE: SubTitle Page 2 -->
 This is load test content";
             File.WriteAllText(savePath, content);
@@ -93,7 +94,7 @@ This is load test content";
             Assert.IsTrue(result);
             Assert.AreEqual("test-page-1", testPageModel.PageLink);
             Assert.IsTrue(File.Exists(savePath));
-            Assert.AreEqual($@"<!-- TITLE: Test Page 1 -->
+            Assert.AreEqual(@"<!-- TITLE: Test Page 1 -->
 <!-- SUBTITLE: SubTitle Page 1 -->
 This is test content",
                 File.ReadAllText(savePath));
@@ -112,7 +113,7 @@ This is test content",
             var manager = new PageManager(gitMock.Object, @"..\..\..\WikiPages");
             Directory.CreateDirectory(@"..\..\..\WikiPages\SubFolder2");
             var savePath = @"..\..\..\WikiPages\SubFolder2\test-page-3.md";
-            var content = $@"<!-- TITLE: Test Page 3 -->
+            var content = @"<!-- TITLE: Test Page 3 -->
 <!-- SUBTITLE: SubTitle Page 3 -->
 This is load test content";
             File.WriteAllText(savePath, content);
@@ -133,6 +134,7 @@ This is load test content";
             Directory.Delete(Path.GetDirectoryName(savePath));
         }
 
+
         [TestMethod]
         public void LoadNavPageList()
         {
@@ -141,13 +143,13 @@ This is load test content";
             var manager = new PageManager(gitMock.Object, @"..\..\..\WikiPages");
 
             var savePath4 = @"..\..\..\WikiPages\test-page-4.md";
-            var content = $@"<!-- TITLE: Test Page 4 -->
+            var content = @"<!-- TITLE: Test Page 4 -->
 <!-- SUBTITLE: SubTitle Page 4 -->
 This is load test content";
             File.WriteAllText(savePath4, content);
             Directory.CreateDirectory(@"..\..\..\WikiPages\SubFolder3");
             var savePath5 = @"..\..\..\WikiPages\SubFolder3\test-page-5.md";
-            content = $@"<!-- TITLE: Test Page 5 -->
+            content = @"<!-- TITLE: Test Page 5 -->
 <!-- SUBTITLE: SubTitle Page 5 -->
 This is load test content";
             File.WriteAllText(savePath5, content);

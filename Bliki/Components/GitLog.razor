@@ -3,7 +3,7 @@
 <h3>GitLog @FileName</h3>
 
 <div class="git-log">
-    @((MarkupString)Content)
+    @((MarkupString) Content)
 </div>
 
 @code {
@@ -13,6 +13,7 @@
 
     [Inject]
     public IGitManager GitManager { get; set; } = default!;
+
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -24,4 +25,6 @@
             StateHasChanged();
         }
     }
+
+
 }
