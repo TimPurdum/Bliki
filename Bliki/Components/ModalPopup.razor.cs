@@ -7,6 +7,8 @@ namespace Bliki.Components
     {
         [Inject]
 		private ModalService ModalService { get; set; } = default!;
+        [Inject]
+        private FileModalService FileService { get; set; } = default!;
 
         protected bool IsVisible { get; set; }
         protected string? Title { get; set; }
@@ -37,6 +39,8 @@ namespace Bliki.Components
         {
             ModalService.OnShow -= ShowModal;
             ModalService.OnClose -= CloseModal;
+            FileService.OnShow -= ShowModal;
+            FileService.OnClose -= CloseModal;
         }
 
 
@@ -45,6 +49,8 @@ namespace Bliki.Components
             base.OnInitialized();
             ModalService.OnShow += ShowModal;
             ModalService.OnClose += CloseModal;
+            FileService.OnShow += ShowModal;
+            FileService.OnClose += CloseModal;
         }
     }
 }

@@ -1,0 +1,8 @@
+﻿@inject FileModalService ModalService
+
+<p>Enter the file name with extension (e.g. <i>.png</i>) and optional folder.</p>
+<div style="display: inline-block">
+    <code>uploads/</code>
+    <input type="text" @bind="ModalService.FilePath" />
+    <button @onclick="ModalService.Close">Save</button>
+</div>

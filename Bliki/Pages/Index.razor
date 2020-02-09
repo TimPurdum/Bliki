@@ -23,10 +23,14 @@
         </div>
     </div>
     <div class="nav-right">
-        <label class="switch">
-            <input type="checkbox" @onchange="ToggleDarkMode">
-            <span class="slider round"></span>
-        </label>
+        <div class="dark-mode-nav nav-link">
+            <label class="switch">
+                <input type="checkbox" @onchange="ToggleDarkMode">
+                <span class="slider round"></span>
+            </label>
+            Dark Mode
+        </div>
+        
         <AuthorizeView>
             <Authorized>
 

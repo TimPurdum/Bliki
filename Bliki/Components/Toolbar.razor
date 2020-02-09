@@ -1,4 +1,6 @@
-﻿<div class="toolbar" style="@Style">
+﻿@inject IJSRuntime JsRuntime
+
+<div class="toolbar" style="@Style">
     <button class="btn btn-sm toolbar-btn@(Bold ? "-selected" : "")"
             @onclick="() => Click(ToolbarButton.Bold)">
         <span class="oi oi-bold"></span>
@@ -46,9 +48,15 @@
     </button>
     <button class="btn btn-sm toolbar-btn@(NumberedList ? "-selected" : "")"
             @onclick="() => Click(ToolbarButton.NumberedList)">
-        <img src="/Images/numberedList.png" width="18"/>
+        <img src="/Images/numberedList.png" width="18" />
         <span class="tooltip">Numbered List</span>
     </button>
+    <button class="btn btn-sm toolbar-btn"
+            @onclick="() => Click(ToolbarButton.UploadFile)">
+        <span class="oi oi-file"></span>
+        <span class="tooltip">Upload File</span>
+    </button>
+    <InputFile OnChange="HandleFileSelected" id="blazor-input-file" />
 </div>
 
 @code {
@@ -76,12 +84,24 @@
     public bool BulletList { get; set; }
     [Parameter]
     public EventCallback<ToolbarButton> ButtonClick { get; set; }
+    [Parameter]
+    public EventCallback<IFileListEntry[]> FilesAttached { get; set; }
 
 
     private async void Click(ToolbarButton btn)
     {
-        await ButtonClick.InvokeAsync(btn);
+        if (btn == ToolbarButton.UploadFile)
+        {
+            await JsRuntime.InvokeVoidAsync("inputFileClick");
+        }
+        else
+        {
+            await ButtonClick.InvokeAsync(btn);
+        }
     }
 
-
+    private async void HandleFileSelected(IFileListEntry[] files)
+    {
+        await FilesAttached.InvokeAsync(files);
+    }
 }

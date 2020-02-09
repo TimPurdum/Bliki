@@ -1,0 +1,13 @@
+﻿@*@page  "/uploads/{FilePath}"*@
+
+<object data="/uploads/@FilePath" />
+
+@code {
+    [Parameter]
+    public string FilePath { get; set; } = "";
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+    }
+}

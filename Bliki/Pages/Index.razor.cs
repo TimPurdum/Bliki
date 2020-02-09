@@ -55,6 +55,10 @@ namespace Bliki.Pages
         {
             try
             {
+                if (Folder == "uploads")
+                {
+                    _navManager.NavigateTo(_navManager.ToAbsoluteUri(_navManager.Uri).ToString(), true);
+                }
                 if (string.IsNullOrEmpty(PageLink) ||
                     !_pageManager.PageExists(PageLink, Folder))
                 {

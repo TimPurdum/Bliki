@@ -11,6 +11,7 @@
         InlineCode,
         CodeBlock,
         NumberedList,
-        BulletList
+        BulletList,
+        UploadFile
     }
 }

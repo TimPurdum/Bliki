@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -213,5 +214,18 @@ namespace Bliki.Data
 
 
         private readonly Regex _lineBreakRegex = new Regex("\r\n|\r|\n");
+
+        internal ToggleResult InsertFileLink(string content, int start, int end, string filePath)
+        {
+            var selected = start >= 0 && end <= content.Length
+                ? content.Substring(start, end - start)
+                : content;
+            content = content.Remove(start, selected.Length);
+            var displayName = Path.GetFileNameWithoutExtension(filePath).Replace('-', ' ');
+            var insert = $"[{displayName}](/uploads/{filePath} \"{displayName}\")";
+            content = content.Insert(start, insert);
+
+            return new ToggleResult(content, insert.Length - selected.Length);
+        }
     }
 }

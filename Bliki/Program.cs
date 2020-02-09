@@ -28,8 +28,9 @@ namespace Bliki
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>()
-                    .UseUrls("http://localhost");
-                }).UseWindowsService();
+                    .UseStaticWebAssets()
+                    .UseUrls("http://localhost:5000");
+                });//.UseWindowsService();
         }
 
 

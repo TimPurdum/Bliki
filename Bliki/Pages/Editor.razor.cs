@@ -1,5 +1,7 @@
-﻿using Bliki.Components;
+﻿using BlazorInputFile;
+using Bliki.Components;
 using Bliki.Data;
+using Bliki.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -48,13 +50,17 @@ namespace Bliki.Pages
         private MarkdownEditorManager _editorManager { get; set; } = default!;
         [Inject]
         private ModalService Modal { get; set; } = default!;
+        [Inject]
+        private FileModalService FileService { get; set; } = default!;
 
         protected WikiPageModel PageModel { get; set; } = new WikiPageModel();
 
         protected Toolbar? Toolbar { get; set; }
         [Inject]
-        private AuthenticationStateProvider _authenticationStateProvider { get; } = default!;
+        private AuthenticationStateProvider _authenticationStateProvider { get; set; } = default!;
         private ElementReference EditorElement { get; set; }
+        [Inject]
+        private FileManager _fileManager { get; set; } = default!;
 
 
         protected override async Task OnInitializedAsync()
@@ -72,6 +78,8 @@ namespace Bliki.Pages
                 if (firstRender)
                 {
                     CheckPageLink();
+                    FileService.OnClose += UploadDialogClosed;
+                    Modal.OnClose += Modal_OnCloseDelete;
                 }
             }
             catch (Exception ex)
@@ -137,19 +145,18 @@ namespace Bliki.Pages
 
         protected void Delete()
         {
-            Modal.OnClose += Modal_OnClose;
             Modal.Show("Delete", typeof(ConfirmDeleteForm), PageLink);
         }
 
 
-        private void Modal_OnClose()
+        private void Modal_OnCloseDelete()
         {
             if (Modal.Success)
             {
                 _pageManager.DeletePage(PageLink, _userIdentity?.Name, Folder);
             }
 
-            Modal.OnClose -= Modal_OnClose;
+            Modal.OnClose -= Modal_OnCloseDelete;
             CloseEditor();
         }
 
@@ -222,6 +229,23 @@ namespace Bliki.Pages
             await EditorElement.Focus(_jsRuntime, _selectionStart, _selectionEnd);
         }
 
+
+        private void OnFilesAttached(IFileListEntry[] files)
+        {
+            foreach (var file in files)
+            {
+                FileService.FilePath = file.Name;
+                FileService.File = file;
+                FileService.Show("Upload File", typeof(FileUploadForm), PageLink);
+            }
+        }
+
+        private async void UploadDialogClosed()
+        {
+            if (FileService.File == null || FileService.FilePath == null) return;
+            await _fileManager.Save(FileService.File, FileService.FilePath);
+            await InsertFileLink(FileService.FilePath);
+        }
 
         private void GitHistory()
         {
@@ -337,6 +361,17 @@ namespace Bliki.Pages
             await CheckFormattingPosition();
             var toggleResult =
                 _editorManager.InsertTab(PageModel.Content, _selectionStart, _selectionEnd);
+            PageModel.Content = toggleResult.Content;
+            StateHasChanged();
+            await ResetCursor(toggleResult.Offset);
+            await CheckFormattingPosition();
+        }
+
+        private async Task InsertFileLink(string filePath)
+        {
+            await CheckFormattingPosition();
+            var toggleResult =
+                _editorManager.InsertFileLink(PageModel.Content, _selectionStart, _selectionEnd, filePath);
             PageModel.Content = toggleResult.Content;
             StateHasChanged();
             await ResetCursor(toggleResult.Offset);

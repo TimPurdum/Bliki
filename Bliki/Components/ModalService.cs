@@ -13,7 +13,6 @@ namespace Bliki.Components
 
         public bool Success { get; set; }
 
-
         public void Show(string title, Type contentType, string? pageLink = null)
         {
             PageLink = pageLink;

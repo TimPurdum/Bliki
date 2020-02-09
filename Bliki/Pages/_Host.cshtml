@@ -5,12 +5,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bliki</title>
-    <base href="~/"/>
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css"/>
-    <link href="css/site.css" rel="stylesheet"/>
+    <base href="~/" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link href="css/site.css" rel="stylesheet" />
+    <script src="_content/BlazorInputFile/inputfile.js"></script>
     <script>
         window.scrollToElementId = (elementId) => {
             console.info('scrolling to element', elementId);
@@ -20,13 +21,13 @@
                 return false;
             }
             var headerOffset = 80;
-    	    var elementPosition = element.getBoundingClientRect().top;
+            var elementPosition = element.getBoundingClientRect().top;
             var offsetPosition = elementPosition - headerOffset;
-      
-              window.scrollTo({
-                  top: offsetPosition,
-                  behavior: "smooth"
-              });   
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: "smooth"
+            });
             return true;
         }
 
@@ -59,13 +60,18 @@
             body.classList.toggle("dark-mode");
         }
 
+        window.inputFileClick = () => {
+            var btn = document.getElementById('blazor-input-file');
+            btn.click();
+        }
+
         document.onkeydown = (e) => {
             if (e.ctrlKey && e.code === 'KeyS') {
                 e.preventDefault();
             }
 
             var activeElementId = document.activeElement.id;
-                        
+
             if (e.code == 'Tab' && activeElementId == 'editor-text-area') {
                 console.log('Tab pressed!');
                 e.preventDefault();
@@ -74,10 +80,10 @@
     </script>
 </head>
 <body>
-<app>
-    @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))
-</app>
+    <app>
+        @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))
+    </app>
 
-<script src="_framework/blazor.server.js"></script>
+    <script src="_framework/blazor.server.js"></script>
 </body>
 </html>
