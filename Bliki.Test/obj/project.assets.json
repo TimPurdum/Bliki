@@ -4814,12 +4814,27 @@
           "Microsoft.AspNetCore.App"
         ]
       },
+      "MarkDig/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "dependencies": {
+          "ColorCode.HTML": "2.0.6",
+          "Markdig.Signed": "0.18.0"
+        },
+        "compile": {
+          "bin/placeholder/MarkDig.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MarkDig.dll": {}
+        }
+      },
       "MarkDig.Extensions.FSharp/1.0.0": {
         "type": "project",
         "framework": ".NETStandard,Version=v2.0",
         "dependencies": {
           "ColorCode.HTML": "2.0.6",
           "FSharp.Core": "4.7.0",
+          "MarkDig": "1.0.0",
           "Markdig.Signed": "0.18.0"
         },
         "compile": {
@@ -13653,6 +13668,11 @@
       "type": "project",
       "path": "../Bliki/Bliki.csproj",
       "msbuildProject": "../Bliki/Bliki.csproj"
+    },
+    "MarkDig/1.0.0": {
+      "type": "project",
+      "path": "../MarkDig.Extensions/MarkDig.Extensions.csproj",
+      "msbuildProject": "../MarkDig.Extensions/MarkDig.Extensions.csproj"
     },
     "MarkDig.Extensions.FSharp/1.0.0": {
       "type": "project",

@@ -9,14 +9,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bliki.Test", "Bliki.Test\Bl
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "MarkDig.Extensions.FSharp", "MarkDig.Extensions.FSharp\MarkDig.Extensions.FSharp.fsproj", "{ACF5690D-BB0C-4168-9198-CD06A5020CCF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarkDig.Extensions", "MarkDig.Extensions\MarkDig.Extensions.csproj", "{6F738B20-AA51-4868-8775-02AB9DD7DEF5}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C9EA3934-77BC-490A-9FA6-EF786C42A0E5}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarkDig.Extensions", "MarkDig.Extensions\MarkDig.Extensions.csproj", "{D953A28D-B5D1-46EA-8CBF-ECE610F0EBE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,10 +36,10 @@ Global
 		{ACF5690D-BB0C-4168-9198-CD06A5020CCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACF5690D-BB0C-4168-9198-CD06A5020CCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACF5690D-BB0C-4168-9198-CD06A5020CCF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6F738B20-AA51-4868-8775-02AB9DD7DEF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F738B20-AA51-4868-8775-02AB9DD7DEF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F738B20-AA51-4868-8775-02AB9DD7DEF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F738B20-AA51-4868-8775-02AB9DD7DEF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D953A28D-B5D1-46EA-8CBF-ECE610F0EBE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D953A28D-B5D1-46EA-8CBF-ECE610F0EBE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D953A28D-B5D1-46EA-8CBF-ECE610F0EBE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D953A28D-B5D1-46EA-8CBF-ECE610F0EBE7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

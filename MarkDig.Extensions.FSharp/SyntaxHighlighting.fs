@@ -9,6 +9,8 @@ open Markdig.Renderers.Html
 open Markdig.Syntax
 
 open System
+open Markdig.Renderers.Html.Inlines
+open MarkDig.Extensions
 
 /// A renderer that will render fenced code blocks with syntax highlighting.
 /// This renderer only accepts fenced code blocks with a language specified for which
@@ -50,3 +52,12 @@ type SyntaxHighlightingExtension(style : StyleDictionary) =
 
         member __.Setup(_, renderer) = 
             renderer.ObjectRenderers.ReplaceOrAdd<CodeBlockRenderer>(new HighlightedCodeBlockRenderer(style)) |> ignore
+
+
+type FileLinkNewTabExtension() =
+    interface IMarkdownExtension with
+
+        member __.Setup(_) = ()
+
+        member __.Setup(_, renderer) = 
+            renderer.ObjectRenderers.Replace<LinkInlineRenderer>(new LinkInlineNewTabRenderer()) |> ignore

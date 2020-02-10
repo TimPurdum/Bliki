@@ -4,9 +4,11 @@
     [Parameter]
     public string Content { get; set; } = "";
 
+
     private readonly MarkdownPipeline _pipeline = new MarkdownPipelineBuilder()
         .UseAdvancedExtensions()
         .UseSyntaxHighlighting()
         .UseSoftlineBreakAsHardlineBreak()
+        .UseFileLinkNewTab()
         .Build();
 }

@@ -14,4 +14,8 @@
     <PackageReference Include="Markdig.Signed" Version="0.18.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MarkDig.Extensions\MarkDig.Extensions.csproj" />
+  </ItemGroup>
+
 </Project>
