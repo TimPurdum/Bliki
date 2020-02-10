@@ -6,7 +6,6 @@
     <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
     <Nullable>enable</Nullable>
     <LangVersion>8</LangVersion>
-    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -40,6 +40,7 @@ namespace Bliki
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>()
+                        .UseStaticWebAssets()
                         .UseKestrel(options =>
                         {
                             options.Listen(IPAddress.Loopback, 5200);
