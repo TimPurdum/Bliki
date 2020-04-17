@@ -19,7 +19,7 @@ namespace Bliki.Data
 
         public bool Equals([AllowNull] BlikiUser other)
         {
-            return other.Id == Id;
+            return other?.Id == Id;
         }
 
 

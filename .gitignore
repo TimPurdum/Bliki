@@ -1,8 +1,8 @@
 .vs
-*\bin
-*\obj
-*\.idea
-*\UserStore.json
+*/bin
+*/obj
+*/.idea
+*/UserStore.json
 /Bliki/WikiPages/glossary.md
 /Bliki/WikiPages/git-commands-to-remember.md
 /Bliki/WikiPages/feature-implementation-workflow.md
@@ -22,3 +22,12 @@ appsettings.Development.json
 /Bliki/WikiPages/uploads/notes_32.png
 /Bliki/WikiPages/uploads/image.png
 /Bliki/WikiPages/uploads/ArrestLog.pdf
+/.idea/.idea.Bliki/riderModule.iml
+/.idea/.idea.Bliki/.idea/workspace.xml
+/.idea/.idea.Bliki/.idea/vcs.xml
+/.idea/.idea.Bliki/.idea/projectSettingsUpdater.xml
+/.idea/.idea.Bliki/.idea/modules.xml
+/.idea/.idea.Bliki/.idea/misc.xml
+/.idea/.idea.Bliki/.idea/indexLayout.xml
+/.idea/.idea.Bliki/.idea/encodings.xml
+/.idea/.idea.Bliki/.idea/contentModel.xml

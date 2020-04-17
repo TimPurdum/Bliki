@@ -18,7 +18,7 @@ namespace Bliki.Data
         public PageManager(IGitManager gitManager)
         {
             _gitManager = gitManager;
-            FindWikiPageDirectory(Directory.GetCurrentDirectory());
+            FindWikiPageDirectory(AppDomain.CurrentDomain.BaseDirectory ?? Directory.GetCurrentDirectory());
         }
 
 

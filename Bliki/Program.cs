@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
 
@@ -28,9 +27,8 @@ namespace Bliki
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>()
-                    .UseStaticWebAssets()
-                    .UseUrls("http://localhost:5000");
-                });//.UseWindowsService();
+                    .UseStaticWebAssets();
+                }).UseWindowsService();
         }
 
 

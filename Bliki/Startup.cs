@@ -49,6 +49,14 @@ namespace Bliki
             services.AddScoped<FileModalService>();
             services.AddScoped<FileManager>();
             services.AddHttpContextAccessor();
+            services.Configure<IdentityOptions>(o =>
+                {
+                    o.Password.RequireDigit = false;
+                    o.Password.RequiredLength = 4;
+                    o.Password.RequireLowercase = false;
+                    o.Password.RequireNonAlphanumeric = false;
+                    o.Password.RequireUppercase = false;
+                });
             services.AddMvc();
         }
 
@@ -91,7 +99,6 @@ namespace Bliki
                 await next.Invoke();
             });
 
-            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();

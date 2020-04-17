@@ -32,7 +32,7 @@ namespace Bliki.Data
                 var startInfo = new ProcessStartInfo("git");
                 startInfo.RedirectStandardError = true;
                 startInfo.RedirectStandardOutput = true;
-                startInfo.WorkingDirectory = Directory.GetCurrentDirectory();
+                startInfo.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 startInfo.Arguments = "add *";
                 var proc1 = Process.Start(startInfo);
                 Debug.WriteLine(proc1.StandardOutput.ReadToEnd());
@@ -62,6 +62,7 @@ namespace Bliki.Data
             var procInfo = new ProcessStartInfo("git");
             procInfo.RedirectStandardOutput = true;
             procInfo.RedirectStandardError = true;
+            procInfo.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
             if (string.IsNullOrEmpty(fileName))
             {
@@ -73,9 +74,12 @@ namespace Bliki.Data
             }
 
             var proc = Process.Start(procInfo);
-
+            
+            var error = proc.StandardError.ReadToEnd();
+            
             var raw = proc.StandardOutput.ReadToEnd();
-            return FormatGitLog(raw);
+            
+            return FormatGitLog(raw + Environment.NewLine + error);
         }
 
 
